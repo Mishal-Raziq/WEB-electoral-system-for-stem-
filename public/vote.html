@@ -1,0 +1,1837 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEM Elections - Professional Voting System</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== PROFESSIONAL ELECTION DASHBOARD STYLES ===== */
+        :root {
+            --primary-blue: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-blue: #3498db;
+            --accent-purple: #7c3aed;
+            --dark-blue: #1e293b;
+            --light-blue: #ebf5fb;
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --danger-red: #ef4444;
+            --gray-light: #f8fafc;
+            --gray-medium: #e9ecef;
+            --gray-dark: #64748b;
+            --text-dark: #1e293b;
+            --white: #ffffff;
+            --sidebar-bg: #1e293b;
+            --sidebar-link: #cbd5e1;
+            --active-link-bg: #2563eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.15);
+            --radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, var(--sidebar-bg), #0f172a);
+            color: var(--white);
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow);
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-purple));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-main {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+            line-height: 1;
+        }
+
+        .brand-sub {
+            font-size: 0.8rem;
+            color: var(--sidebar-link);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+            flex-grow: 1;
+        }
+
+        .menu-section {
+            padding: 0 20px;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            color: var(--sidebar-link);
+            text-decoration: none;
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+            font-weight: 500;
+            gap: 15px;
+            margin: 0 10px;
+            border-radius: var(--radius);
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+            color: var(--white);
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-purple));
+            color: var(--white);
+            box-shadow: var(--shadow);
+            border-left-color: var(--secondary-blue);
+        }
+
+        .nav-item .material-icons {
+            font-size: 1.4em;
+            opacity: 0.9;
+            width: 24px;
+            text-align: center;
+        }
+
+        .nav-footer {
+            margin-top: auto;
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #logout-btn {
+            width: 100%;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-red);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        #logout-btn:hover {
+            background: var(--danger-red);
+            color: var(--white);
+            transform: none;
+        }
+
+        /* ===== MOBILE TOGGLE BUTTON ===== */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1100;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+        }
+
+        .mobile-toggle .material-icons {
+            font-size: 1.5rem;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 40px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        /* ===== VOTING INTERFACE STYLES ===== */
+        .voting-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 40px;
+            background: linear-gradient(135deg, #4b79a1, #283e51);
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            box-shadow: var(--shadow);
+            animation: fadeIn 0.8s ease;
+        }
+
+        .voting-header-text {
+            flex-grow: 1;
+            max-width: 60%;
+            text-align: left;
+        }
+
+        .voting-header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+        .voting-header p {
+            font-size: 1.1em;
+            margin-top: 0;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .voting-animation {
+            margin: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            flex-shrink: 0;
+            margin-left: 20px;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        .voting-animation-content {
+            position: relative;
+            padding: 20px 30px;
+            background-color: #007bff;
+            color: white;
+            text-align: center;
+        }
+
+        .voting-animation-content h2 {
+            font-size: 1.8em;
+            margin: 0;
+            line-height: 1.2;
+            font-weight: 700;
+        }
+
+        .voting-animation-content p {
+            font-size: 0.9em;
+            margin: 8px 0 0 0;
+            line-height: 1.2;
+            opacity: 0.9;
+        }
+
+        /* Position Sections */
+        .position-section {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: var(--transition);
+            animation: slideUp 0.6s ease;
+        }
+
+        .position-section:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .position-header {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--gray-medium);
+        }
+
+        .position-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--dark-blue);
+            margin-bottom: 8px;
+        }
+
+        .position-instruction {
+            color: var(--gray-dark);
+            font-weight: 500;
+        }
+
+        /* Candidate Cards */
+        .candidates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .candidate-card {
+            background: var(--gray-light);
+            border-radius: 10px;
+            padding: 20px;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            cursor: pointer;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .candidate-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+            border-color: var(--primary-blue);
+        }
+
+        .candidate-card.selected {
+            border-color: var(--success-green);
+            background: rgba(16, 185, 129, 0.05);
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .candidate-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .candidate-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: 3px solid white;
+        }
+
+        .candidate-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .candidate-info {
+            flex: 1;
+        }
+
+        .candidate-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--dark-blue);
+        }
+
+        .candidate-department {
+            font-size: 0.9em;
+            color: var(--gray-dark);
+            font-weight: 500;
+        }
+
+        .candidate-platform {
+            margin-bottom: 15px;
+            color: var(--text-dark);
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .candidate-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .vote-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .vote-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .vote-btn.voted {
+            background: var(--success-green);
+        }
+
+        .view-details-btn {
+            background: transparent;
+            color: var(--primary-blue);
+            border: 1px solid var(--primary-blue);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .view-details-btn:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        /* Submit Section */
+        .submit-section {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            text-align: center;
+            margin-top: 40px;
+            animation: slideUp 0.8s ease;
+        }
+
+        .submit-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--dark-blue);
+            margin-bottom: 20px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--success-green), #34d399);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .submit-btn:disabled {
+            background: var(--gray-dark);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Vote Summary */
+        .vote-summary {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-top: 30px;
+            animation: slideUp 1s ease;
+        }
+
+        .summary-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--gray-medium);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-position {
+            font-weight: 500;
+        }
+
+        .summary-candidate {
+            color: var(--gray-dark);
+        }
+
+        /* ===== UPDATED SUCCESS MODAL ===== */
+        .success-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .success-modal.active {
+            display: flex;
+        }
+
+        .success-content {
+            background: rgba(31, 43, 85, 0.8);   /* Dark blue with transparency */
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 0 50px rgba(59, 130, 246, 0.4);  /* Soft blue glow */
+            position: relative;
+            overflow: hidden;
+            animation: scaleIn 0.5s ease;
+            border: 1px solid rgba(59, 130, 246, 0.3);     /* Light blue border */
+        }
+
+        /* Confetti container positioned at top */
+        #confettiContainer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .success-icon {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 30px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        /* Improved SVG Checkmark Animation */
+        .checkmark-svg {
+            display: block;
+            width: 120px;
+            height: 120px;
+            filter: drop-shadow(0 0 10px #00ffaa);
+            animation: pulse-glow 2s infinite alternate;
+        }
+
+        .checkmark-svg path {
+            fill: none;
+            stroke-width: 6;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke: #00ffaa;
+        }
+
+        /* The Circle Path */
+        .path-circle {
+            stroke-dasharray: 500;
+            stroke-dashoffset: 500;
+            animation: draw-circle 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        /* The Checkmark Path */
+        .path-tick {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: draw-tick 0.8s cubic-bezier(0.65, 0, 0.45, 1) 1s forwards;
+        }
+
+        .success-content h2 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            color: #00ffaa;
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(0, 255, 170, 0.7);
+            position: relative;
+            z-index: 2;
+        }
+
+        .success-content p {
+            font-size: 1.3em;
+            color: white;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            font-weight: 300;
+            position: relative;
+            z-index: 2;
+        }
+
+        .continue-btn {
+            background: transparent;
+            color: #00ffaa;
+            border: 2px solid #00ffaa;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 0 15px rgba(0, 255, 170, 0.3);
+            position: relative;
+            z-index: 2;
+        }
+
+        .continue-btn:hover {
+            background: rgba(0, 255, 170, 0.1);
+            box-shadow: 0 0 25px rgba(0, 255, 170, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* ===== FIXED 3D VOTING ANIMATION ===== */
+        .voting-animation-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 3000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .voting-animation-container.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .ballot-box {
+            width: 200px;
+            height: 300px;
+            position: relative;
+            perspective: 1000px;
+            margin-bottom: 100px;
+        }
+
+        .box {
+            width: 200px;
+            height: 200px;
+            position: absolute;
+            bottom: 0;
+            transform-style: preserve-3d;
+            transform: rotateX(-15deg); /* FIXED: Changed from positive to negative */
+        }
+
+        .box-side {
+            position: absolute;
+            background: #8B4513;
+            border: 2px solid #654321;
+        }
+
+        .box-front {
+            width: 200px;
+            height: 200px;
+            transform: translateZ(100px);
+            background: linear-gradient(to bottom, #8B4513, #A0522D);
+            border-radius: 5px;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .box-back {
+            width: 200px;
+            height: 200px;
+            transform: translateZ(-100px) rotateY(180deg);
+            background: linear-gradient(to bottom, #8B4513, #A0522D);
+            border-radius: 5px;
+        }
+
+        .box-left {
+            width: 200px;
+            height: 200px;
+            transform: translateX(-100px) rotateY(-90deg);
+            background: linear-gradient(to bottom, #654321, #8B4513);
+            border-radius: 5px;
+        }
+
+        .box-right {
+            width: 200px;
+            height: 200px;
+            transform: translateX(100px) rotateY(90deg);
+            background: linear-gradient(to bottom, #654321, #8B4513);
+            border-radius: 5px;
+        }
+
+        .box-top {
+            width: 200px;
+            height: 200px;
+            transform: translateY(-100px) rotateX(90deg);
+            background: #A0522D;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slot {
+            width: 120px;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+        }
+
+        .ballot-paper {
+            position: absolute;
+            width: 100px;
+            height: 150px;
+            background: linear-gradient(to bottom, #f0f8ff, #e6f2ff);
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #2563eb;
+            font-size: 1.2em;
+            transform-style: preserve-3d;
+            transform-origin: center;
+            opacity: 0;
+            z-index: 10;
+        }
+
+        .ballot-paper::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 2px dashed #2563eb;
+            border-radius: 4px;
+            opacity: 0.5;
+        }
+
+        .vote-text {
+            position: absolute;
+            bottom: -60px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+            opacity: 0;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: #00ffaa;
+            animation: confettiFall 5s linear forwards;
+            opacity: 0.8;
+        }
+
+        .confetti:nth-child(2n) {
+            background: #2563eb;
+        }
+
+        .confetti:nth-child(3n) {
+            background: #7c3aed;
+        }
+
+        .confetti:nth-child(4n) {
+            background: #f59e0b;
+        }
+
+        .confetti:nth-child(5n) {
+            background: #ef4444;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-hover);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            border-left: 4px solid var(--success-green);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left-color: var(--success-green);
+        }
+
+        .toast.error {
+            border-left-color: var(--danger-red);
+        }
+
+        /* Content Transition */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.02);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes neonPulse {
+            0% {
+                box-shadow: 
+                    0 0 20px #00ffaa,
+                    0 0 40px #00ffaa,
+                    0 0 60px #00ffaa,
+                    inset 0 0 20px rgba(0, 255, 170, 0.3);
+            }
+            100% {
+                box-shadow: 
+                    0 0 30px #00ffaa,
+                    0 0 60px #00ffaa,
+                    0 0 90px #00ffaa,
+                    inset 0 0 30px rgba(0, 255, 170, 0.5);
+            }
+        }
+
+        @keyframes draw-circle {
+            to {
+                stroke-dashoffset: 0;
+                opacity: 1;
+            }
+        }
+
+        @keyframes draw-tick {
+            to {
+                stroke-dashoffset: 0;
+                opacity: 1;
+            }
+        }
+
+        @keyframes pulse-glow {
+            0% {
+                filter: drop-shadow(0 0 5px #00ffaa);
+            }
+            100% {
+                filter: drop-shadow(0 0 15px #00ffaa);
+            }
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(1000px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* ===== FIXED 3D ANIMATION KEYFRAMES ===== */
+        @keyframes flyToBox {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            30% {
+                transform: translateY(-150px) rotate(180deg) scale(1.2);
+            }
+            70% {
+                transform: translateY(-50px) rotate(360deg) scale(0.8);
+            }
+            100% {
+                transform: translateY(0) rotate(540deg) scale(0.1);
+                opacity: 0;
+            }
+        }
+
+        @keyframes fadeInText {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes boxShake {
+            0%, 100% {
+                transform: rotateX(-15deg) translateY(0);
+            }
+            25% {
+                transform: rotateX(-15deg) translateY(-5px);
+            }
+            50% {
+                transform: rotateX(-15deg) translateY(5px);
+            }
+            75% {
+                transform: rotateX(-15deg) translateY(-3px);
+            }
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .candidates-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .mobile-toggle {
+                display: flex;
+            }
+            
+            .overlay.active {
+                display: block;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 70px 20px 20px;
+            }
+            
+            .voting-header {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+            }
+            
+            .voting-header-text {
+                max-width: 100%;
+                margin-bottom: 15px;
+                text-align: center;
+            }
+            
+            .voting-animation {
+                margin-left: 0;
+            }
+            
+            .voting-header h1 {
+                font-size: 1.8em;
+            }
+            
+            .candidates-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .success-content {
+                padding: 30px 20px;
+            }
+            
+            .success-content h2 {
+                font-size: 2em;
+            }
+            
+            .success-icon {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .checkmark-svg {
+                width: 100px;
+                height: 100px;
+            }
+
+            .ballot-box {
+                transform: scale(0.8);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-content {
+                padding: 70px 15px 15px;
+            }
+            
+            .position-section, .submit-section, .vote-summary {
+                padding: 20px;
+            }
+            
+            .candidate-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
+            
+            .candidate-actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .vote-btn, .view-details-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .ballot-box {
+                transform: scale(0.7);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Toggle Button -->
+    <button class="mobile-toggle" id="mobileToggle">
+        <span class="material-icons">menu</span>
+    </button>
+
+    <!-- Overlay for mobile -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- FIXED 3D Voting Animation -->
+    <div class="voting-animation-container" id="votingAnimation">
+        <div class="ballot-box">
+            <div class="box">
+                <div class="box-side box-front"></div>
+                <div class="box-side box-back"></div>
+                <div class="box-side box-left"></div>
+                <div class="box-side box-right"></div>
+                <div class="box-side box-top">
+                    <div class="slot"></div>
+                </div>
+            </div>
+            <div class="ballot-paper" id="ballotPaper">VOTE</div>
+            <div class="vote-text" id="voteText">Your Vote Has Been Cast!</div>
+        </div>
+    </div>
+
+    <!-- UPDATED Success Modal -->
+    <div class="success-modal" id="successModal">
+        <div class="success-content">
+            <!-- Confetti container moved to top -->
+            <div id="confettiContainer"></div>
+            
+            <div class="success-icon">
+                <!-- Improved checkmark animation -->
+                <svg class="checkmark-svg" viewBox="0 0 130 130" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Glowing Circle -->
+                    <path class="path-circle" d="M65,5.5 C98.8,5.5 125.5,32.2 125.5,66 C125.5,99.8 98.8,126.5 65,126.5 C31.2,126.5 4.5,99.8 4.5,66 C4.5,32.2 31.2,5.5 65,5.5 Z"/>
+                    
+                    <!-- Glowing Checkmark/Tick -->
+                    <path class="path-tick" d="M42,65 L58,81 L95,44"/>
+                </svg>
+            </div>
+            
+            <h2>Your Vote Has Been Submitted Successfully!</h2>
+            <p>Thank you for participating in the STEM Society Elections. Your voice matters and contributes to shaping our community's future.</p>
+            <button class="continue-btn" id="closeModal">
+                Continue
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span class="material-icons">check_circle</span>
+        <span id="toast-message">Vote cast successfully!</span>
+    </div>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="images/stem.jpg" alt="STEM Logo" class="brand-logo">
+                <div class="brand-text">
+                    <div class="brand-main">STEM</div>
+                    <div class="brand-sub">Election System</div>
+                </div>
+            </div>
+
+            <ul class="sidebar-menu">
+                <div class="menu-section">
+                    <div class="section-title">Main Navigation</div>
+                    <a href="dashboard.html" class="nav-item">
+                        <span class="material-icons">space_dashboard</span>
+                        Dashboard
+                    </a>
+                    <a href="nominate.html" class="nav-item">
+                        <span class="material-icons">campaign</span>
+                        Campaign
+                    </a>
+                    <a class="nav-item active" data-target="vote">
+                        <span class="material-icons">how_to_vote</span>
+                        Voting
+                    </a>
+                    <a href="results.html" class="nav-item">
+                        <span class="material-icons">bar_chart</span>
+                        Results
+                    </a>
+                </div>
+
+                <div class="menu-section">
+                    <div class="section-title">Account</div>
+                    <a href="profile.html" class="nav-item">
+                        <span class="material-icons">person</span>
+                        Profile
+                    </a>
+                    <a class="nav-item" data-target="settings">
+                        <span class="material-icons">settings</span>
+                        Settings
+                    </a>
+                </div>
+            </ul>
+
+            <div class="nav-footer">
+                <button id="logout-btn" class="nav-item">
+                    <span class="material-icons">logout</span>
+                    Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Voting Section -->
+            <div class="content-section active" id="vote">
+                <div class="voting-header">
+                    <div class="voting-header-text">
+                        <h1>YOU MAY NOW CAST YOUR VOTES!</h1>
+                        <p>Make your voice heard in the STEM Society Elections</p>
+                    </div>
+                    <div class="voting-animation">
+                        <div class="voting-animation-content">
+                            <h2>Vote Now!</h2>
+                            <p>Every choice adds up. Make yours count.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- President Section -->
+                <div class="position-section">
+                    <div class="position-header">
+                        <h2 class="position-title">President Student Council</h2>
+                        <p class="position-instruction">You can only vote for one candidate</p>
+                    </div>
+                    <div class="candidates-grid">
+                        <!-- Candidate 1 -->
+                        <div class="candidate-card" data-position="president" data-candidate="felisa">
+                            <div class="candidate-header">
+                                <div class="candidate-avatar">
+                                    <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="Felisa Monteverde">
+                                </div>
+                                <div class="candidate-info">
+                                    <div class="candidate-name">Sidra Monawar</div>
+                                    <div class="candidate-department">System Development</div>
+                                </div>
+                            </div>
+                            <div class="candidate-platform">
+                                Focused on student welfare and academic excellence. Committed to transparent governance and improving campus facilities.
+                            </div>
+                            <div class="candidate-actions">
+                                <button class="vote-btn" data-position="president" data-candidate="felisa">
+                                    <span class="material-icons">how_to_vote</span>
+                                    VOTE
+                                </button>
+                                <button class="view-details-btn">View Details</button>
+                            </div>
+                        </div>
+
+                        <!-- Candidate 2 -->
+                        <div class="candidate-card" data-position="president" data-candidate="emma">
+                            <div class="candidate-header">
+                                <div class="candidate-avatar">
+                                    <img src="https://th.bing.com/th/id/OIP.nA8RsyVAnrNWJuvfNOI0YwHaHa?w=195&h=195&c=7&r=0&o=7&dpr=1.3&pid=1.7&rm=3" alt="Eman Khalid">
+                                </div>
+                                <div class="candidate-info">
+                                    <div class="candidate-name">Eman Khalid</div>
+                                    <div class="candidate-department">Web Development</div>
+                                </div>
+                            </div>
+                            <div class="candidate-platform">
+                                Advocating for digital transformation and technological advancement in student services and campus operations.
+                            </div>
+                            <div class="candidate-actions">
+                                <button class="vote-btn" data-position="president" data-candidate="emma">
+                                    <span class="material-icons">how_to_vote</span>
+                                    VOTE
+                                </button>
+                                <button class="view-details-btn">View Details</button>
+                            </div>
+                        </div>
+
+                        <!-- Candidate 3 -->
+                        <div class="candidate-card" data-position="president" data-candidate="lorenzo">
+                            <div class="candidate-header">
+                                <div class="candidate-avatar">
+                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="Lorenzo Agustin">
+                                </div>
+                                <div class="candidate-info">
+                                    <div class="candidate-name">Lorenzo Agustin</div>
+                                    <div class="candidate-department">Animation</div>
+                                </div>
+                            </div>
+                            <div class="candidate-platform">
+                                Promoting digital literacy and creating more opportunities for students in tech and innovation fields.
+                            </div>
+                            <div class="candidate-actions">
+                                <button class="vote-btn" data-position="president" data-candidate="lorenzo">
+                                    <span class="material-icons">how_to_vote</span>
+                                    VOTE
+                                </button>
+                                <button class="view-details-btn">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vice President Section -->
+                <div class="position-section">
+                    <div class="position-header">
+                        <h2 class="position-title">Vice President Student Council</h2>
+                        <p class="position-instruction">You can only vote for one candidate</p>
+                    </div>
+                    <div class="candidates-grid">
+                        <!-- Candidate 1 -->
+                        <div class="candidate-card" data-position="vice-president" data-candidate="kasey">
+                            <div class="candidate-header">
+                                <div class="candidate-avatar">
+                                    <img src="https://images.unsplash.com/photo-1534751516642-a1af1ef26a56?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="Kasey Rachel Flores">
+                                </div>
+                                <div class="candidate-info">
+                                    <div class="candidate-name">Kasey Rachel Flores</div>
+                                    <div class="candidate-department">System Development</div>
+                                </div>
+                            </div>
+                            <div class="candidate-platform">
+                                Committed to supporting the president's vision while focusing on student engagement and event management.
+                            </div>
+                            <div class="candidate-actions">
+                                <button class="vote-btn" data-position="vice-president" data-candidate="kasey">
+                                    <span class="material-icons">how_to_vote</span>
+                                    VOTE
+                                </button>
+                                <button class="view-details-btn">View Details</button>
+                            </div>
+                        </div>
+
+                        <!-- Candidate 2 -->
+                        <div class="candidate-card" data-position="vice-president" data-candidate="carolina">
+                            <div class="candidate-header">
+                                <div class="candidate-avatar">
+                                    <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="Carolina Labasan">
+                                </div>
+                                <div class="candidate-info">
+                                    <div class="candidate-name">Carolina Labasan</div>
+                                    <div class="candidate-department">Web Development</div>
+                                </div>
+                            </div>
+                            <div class="candidate-platform">
+                                Focused on academic support programs and creating better communication channels between students and faculty.
+                            </div>
+                            <div class="candidate-actions">
+                                <button class="vote-btn" data-position="vice-president" data-candidate="carolina">
+                                    <span class="material-icons">how_to_vote</span>
+                                    VOTE
+                                </button>
+                                <button class="view-details-btn">View Details</button>
+                            </div>
+                        </div>
+
+                        <!-- Candidate 3 -->
+                        <div class="candidate-card" data-position="vice-president" data-candidate="meagan">
+                            <div class="candidate-header">
+                                <div class="candidate-avatar">
+                                    <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="Meagan Catubig">
+                                </div>
+                                <div class="candidate-info">
+                                    <div class="candidate-name">Meagan Catubig</div>
+                                    <div class="candidate-department">Animation</div>
+                                </div>
+                            </div>
+                            <div class="candidate-platform">
+                                Advocating for student rights and improving campus facilities for a better learning environment.
+                            </div>
+                            <div class="candidate-actions">
+                                <button class="vote-btn" data-position="vice-president" data-candidate="meagan">
+                                    <span class="material-icons">how_to_vote</span>
+                                    VOTE
+                                </button>
+                                <button class="view-details-btn">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Secretary Section -->
+                <div class="position-section">
+                    <div class="position-header">
+                        <h2 class="position-title">Secretary Student Council</h2>
+                        <p class="position-instruction">You can only vote for one candidate</p>
+                    </div>
+                    <div class="candidates-grid">
+                        <!-- Candidate 1 -->
+                        <div class="candidate-card" data-position="secretary" data-candidate="elite">
+                            <div class="candidate-header">
+                                <div class="candidate-avatar">
+                                    <img src="https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="Elite Coljumpeo">
+                                </div>
+                                <div class="candidate-info">
+                                    <div class="candidate-name">Elite Coljumpeo</div>
+                                    <div class="candidate-department">System Development</div>
+                                </div>
+                            </div>
+                            <div class="candidate-platform">
+                                Focused on efficient documentation and transparent communication of council activities to the student body.
+                            </div>
+                            <div class="candidate-actions">
+                                <button class="vote-btn" data-position="secretary" data-candidate="elite">
+                                    <span class="material-icons">how_to_vote</span>
+                                    VOTE
+                                </button>
+                                <button class="view-details-btn">View Details</button>
+                            </div>
+                        </div>
+
+                        <!-- Candidate 2 -->
+                        <div class="candidate-card" data-position="secretary" data-candidate="claudio">
+                            <div class="candidate-header">
+                                <div class="candidate-avatar">
+                                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="Claudio Lucio Tojada">
+                                </div>
+                                <div class="candidate-info">
+                                    <div class="candidate-name">Claudio Lucio Tojada</div>
+                                    <div class="candidate-department">Web Development</div>
+                                </div>
+                            </div>
+                            <div class="candidate-platform">
+                                Committed to digital record-keeping and creating accessible archives of student council proceedings.
+                            </div>
+                            <div class="candidate-actions">
+                                <button class="vote-btn" data-position="secretary" data-candidate="claudio">
+                                    <span class="material-icons">how_to_vote</span>
+                                    VOTE
+                                </button>
+                                <button class="view-details-btn">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NEW: Treasurer Section -->
+                <div class="position-section">
+                    <div class="position-header">
+                        <h2 class="position-title">Treasurer Student Council</h2>
+                        <p class="position-instruction">You can only vote for one candidate</p>
+                    </div>
+                    <div class="candidates-grid">
+                        <!-- Candidate 1 -->
+                        <div class="candidate-card" data-position="treasurer" data-candidate="michael">
+                            <div class="candidate-header">
+                                <div class="candidate-avatar">
+                                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="Michael Rodriguez">
+                                </div>
+                                <div class="candidate-info">
+                                    <div class="candidate-name">Michael Rodriguez</div>
+                                    <div class="candidate-department">Finance & Accounting</div>
+                                </div>
+                            </div>
+                            <div class="candidate-platform">
+                                Committed to transparent financial management, responsible budgeting, and maximizing resources for student initiatives and events.
+                            </div>
+                            <div class="candidate-actions">
+                                <button class="vote-btn" data-position="treasurer" data-candidate="michael">
+                                    <span class="material-icons">how_to_vote</span>
+                                    VOTE
+                                </button>
+                                <button class="view-details-btn">View Details</button>
+                            </div>
+                        </div>
+
+                        <!-- Candidate 2 -->
+                        <div class="candidate-card" data-position="treasurer" data-candidate="sarah">
+                            <div class="candidate-header">
+                                <div class="candidate-avatar">
+                                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="Sarah Johnson">
+                                </div>
+                                <div class="candidate-info">
+                                    <div class="candidate-name">Sarah Johnson</div>
+                                    <div class="candidate-department">Business Administration</div>
+                                </div>
+                            </div>
+                            <div class="candidate-platform">
+                                Focused on innovative funding strategies, financial literacy programs, and ensuring equitable distribution of resources across all departments.
+                            </div>
+                            <div class="candidate-actions">
+                                <button class="vote-btn" data-position="treasurer" data-candidate="sarah">
+                                    <span class="material-icons">how_to_vote</span>
+                                    VOTE
+                                </button>
+                                <button class="view-details-btn">View Details</button>
+                            </div>
+                        </div>
+
+                        <!-- Candidate 3 -->
+                        <div class="candidate-card" data-position="treasurer" data-candidate="david">
+                            <div class="candidate-header">
+                                <div class="candidate-avatar">
+                                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=400&q=80" alt="David Chen">
+                                </div>
+                                <div class="candidate-info">
+                                    <div class="candidate-name">David Chen</div>
+                                    <div class="candidate-department">Economics</div>
+                                </div>
+                            </div>
+                            <div class="candidate-platform">
+                                Advocating for sustainable financial practices, digital payment solutions, and creating student entrepreneurship funds.
+                            </div>
+                            <div class="candidate-actions">
+                                <button class="vote-btn" data-position="treasurer" data-candidate="david">
+                                    <span class="material-icons">how_to_vote</span>
+                                    VOTE
+                                </button>
+                                <button class="view-details-btn">View Details</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Submit Vote Section -->
+                <div class="submit-section">
+                    <h2 class="submit-title">SUBMIT VOTE</h2>
+                    <button class="submit-btn" id="submitVote" disabled>
+                        <span class="material-icons">send</span>
+                        SUBMIT YOUR VOTE
+                    </button>
+                    <p style="margin-top: 15px; color: var(--gray-dark);">
+                        Review your selections before submitting. You cannot change your vote after submission.
+                    </p>
+                </div>
+
+                <!-- Vote Summary -->
+                <div class="vote-summary">
+                    <h3 class="summary-title">
+                        <span class="material-icons">summarize</span>
+                        VOTE SUMMARY
+                    </h3>
+                    <div class="summary-item">
+                        <span class="summary-position">President:</span>
+                        <span class="summary-candidate" id="president-summary">Not selected</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-position">Vice President:</span>
+                        <span class="summary-candidate" id="vice-president-summary">Not selected</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-position">Secretary:</span>
+                        <span class="summary-candidate" id="secretary-summary">Not selected</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-position">Treasurer:</span>
+                        <span class="summary-candidate" id="treasurer-summary">Not selected</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const mobileToggle = document.getElementById('mobileToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const navItems = document.querySelectorAll('.nav-item');
+            const logoutBtn = document.getElementById('logout-btn');
+            const voteButtons = document.querySelectorAll('.vote-btn');
+            const candidateCards = document.querySelectorAll('.candidate-card');
+            const submitBtn = document.getElementById('submitVote');
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            const viewDetailsBtns = document.querySelectorAll('.view-details-btn');
+            const successModal = document.getElementById('successModal');
+            const closeModal = document.getElementById('closeModal');
+            const confettiContainer = document.getElementById('confettiContainer');
+            
+            // 3D Animation Elements
+            const votingAnimation = document.getElementById('votingAnimation');
+            const ballotPaper = document.getElementById('ballotPaper');
+            const voteText = document.getElementById('voteText');
+            const ballotBox = document.querySelector('.ballot-box');
+
+            // Vote tracking - ADDED TREASURER
+            const userVotes = {
+                president: null,
+                'vice-president': null,
+                secretary: null,
+                treasurer: null  // Added treasurer position
+            };
+
+            // Mobile sidebar toggle
+            function toggleSidebar() {
+                sidebar.classList.toggle('mobile-open');
+                overlay.classList.toggle('active');
+            }
+
+            mobileToggle.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', toggleSidebar);
+
+            // Navigation functionality
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const target = this.getAttribute('data-target');
+                    
+                    // Update active nav item
+                    navItems.forEach(i => i.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show target content section
+                    document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+                    document.getElementById(target).classList.add('active');
+                    
+                    // Close sidebar on mobile
+                    if (window.innerWidth <= 768) {
+                        toggleSidebar();
+                    }
+                });
+            });
+
+            // Vote button functionality
+            voteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const position = this.getAttribute('data-position');
+                    const candidate = this.getAttribute('data-candidate');
+                    const candidateName = this.closest('.candidate-card').querySelector('.candidate-name').textContent;
+                    
+                    // Clear previous selection for this position
+                    document.querySelectorAll(`.candidate-card[data-position="${position}"]`).forEach(card => {
+                        card.classList.remove('selected');
+                        card.querySelector('.vote-btn').classList.remove('voted');
+                        card.querySelector('.vote-btn').innerHTML = '<span class="material-icons">how_to_vote</span> VOTE';
+                    });
+                    
+                    // Select this candidate
+                    this.closest('.candidate-card').classList.add('selected');
+                    this.classList.add('voted');
+                    this.innerHTML = '<span class="material-icons">check</span> VOTED';
+                    
+                    // Update user votes
+                    userVotes[position] = candidateName;
+                    
+                    // Update vote summary
+                    document.getElementById(`${position}-summary`).textContent = candidateName;
+                    
+                    // Check if all positions have votes
+                    checkVoteCompletion();
+                    
+                    // Show confirmation
+                    showToast(`Voted for ${candidateName} as ${position.replace('-', ' ').toUpperCase()}`);
+                });
+            });
+
+            // Candidate card click (alternative to button)
+            candidateCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    if (!e.target.closest('.vote-btn') && !e.target.closest('.view-details-btn')) {
+                        const voteBtn = this.querySelector('.vote-btn');
+                        if (voteBtn) voteBtn.click();
+                    }
+                });
+            });
+
+            // View Details button functionality
+            viewDetailsBtns.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const candidateCard = this.closest('.candidate-card');
+                    const candidateName = candidateCard.querySelector('.candidate-name').textContent;
+                    const candidateDepartment = candidateCard.querySelector('.candidate-department').textContent;
+                    const candidatePlatform = candidateCard.querySelector('.candidate-platform').textContent;
+                    
+                    // Show candidate details in a modal or alert
+                    alert(`Candidate Details:\n\nName: ${candidateName}\nDepartment: ${candidateDepartment}\nPlatform: ${candidatePlatform}`);
+                });
+            });
+
+            // Check if all positions have votes - UPDATED FOR TREASURER
+            function checkVoteCompletion() {
+                const allVoted = Object.values(userVotes).every(vote => vote !== null);
+                submitBtn.disabled = !allVoted;
+            }
+
+            // Submit vote
+            submitBtn.addEventListener('click', function() {
+                if (!this.disabled) {
+                    // Show 3D voting animation
+                    showVotingAnimation();
+                }
+            });
+
+            // FIXED 3D Voting Animation
+            function showVotingAnimation() {
+                // Show the animation container
+                votingAnimation.classList.add('active');
+                
+                // Reset animation elements
+                ballotPaper.style.opacity = '1';
+                ballotPaper.style.transform = 'translateY(0) rotate(0deg) scale(1)';
+                ballotPaper.style.animation = 'none';
+                voteText.style.opacity = '0';
+                voteText.style.animation = 'none';
+                ballotBox.style.animation = 'none';
+                
+                // Start the animation sequence
+                setTimeout(() => {
+                    // Animate the ballot paper flying to the box
+                    ballotPaper.style.animation = 'flyToBox 2s forwards';
+                    
+                    // Add box shake effect when paper enters
+                    setTimeout(() => {
+                        ballotBox.style.animation = 'boxShake 0.5s ease-in-out';
+                    }, 1500);
+                    
+                    // Show success text
+                    setTimeout(() => {
+                        voteText.style.animation = 'fadeInText 1s forwards';
+                    }, 2000);
+                    
+                    // Transition to success modal
+                    setTimeout(() => {
+                        votingAnimation.classList.remove('active');
+                        showSuccessModal();
+                    }, 3500);
+                }, 500);
+            }
+
+            // Show success modal after animation
+            function showSuccessModal() {
+                // Show success modal
+                successModal.classList.add('active');
+                
+                // Create confetti effect
+                createConfetti();
+                
+                // Disable all vote buttons
+                voteButtons.forEach(btn => {
+                    btn.disabled = true;
+                });
+                
+                // Change submit button
+                submitBtn.innerHTML = '<span class="material-icons">check_circle</span> VOTE SUBMITTED';
+                submitBtn.style.background = 'linear-gradient(135deg, var(--success-green), #34d399)';
+                submitBtn.disabled = true;
+
+                // Store votes in localStorage (for demo purposes)
+                storeVotesInDatabase();
+            }
+
+            // Store votes in database (localStorage for demo)
+            function storeVotesInDatabase() {
+                const votes = {
+                    timestamp: new Date().toISOString(),
+                    positions: userVotes
+                };
+                
+                // Get existing votes or initialize empty array
+                const existingVotes = JSON.parse(localStorage.getItem('stemVotes')) || [];
+                existingVotes.push(votes);
+                
+                // Save to localStorage
+                localStorage.setItem('stemVotes', JSON.stringify(existingVotes));
+                
+                console.log('Votes stored:', votes);
+            }
+
+            // Close modal
+            closeModal.addEventListener('click', function() {
+                successModal.classList.remove('active');
+                // Redirect to results page or dashboard
+                // window.location.href = 'results.html';
+            });
+
+            // Create confetti effect
+            function createConfetti() {
+                const confettiCount = 150;
+                
+                for (let i = 0; i < confettiCount; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.animationDelay = Math.random() * 5 + 's';
+                    confetti.style.width = (Math.random() * 10 + 8) + 'px';
+                    confetti.style.height = confetti.style.width;
+                    confettiContainer.appendChild(confetti);
+                }
+            }
+
+            // Logout functionality
+            logoutBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to log out?')) {
+                    showToast('You have been logged out successfully.', 'success');
+                    // Redirect to login page after delay
+                    setTimeout(() => {
+                        window.location.href = 'login.html';
+                    }, 1500);
+                }
+            });
+
+            // Toast notification function
+            function showToast(message, type = 'success') {
+                toastMessage.textContent = message;
+                toast.className = 'toast ' + type;
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3000);
+            }
+
+            // Close sidebar when window is resized to desktop size
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    sidebar.classList.remove('mobile-open');
+                    overlay.classList.remove('active');
+                }
+            });
+
+            // Check if user is logged in (basic authentication check)
+            function checkAuthentication() {
+                const isLoggedIn = localStorage.getItem('isLoggedIn');
+                if (!isLoggedIn) {
+                    window.location.href = 'login.html';
+                }
+            }
+
+            // Initialize authentication check
+            checkAuthentication();
+        });
+    </script>
+</body>
+</html>

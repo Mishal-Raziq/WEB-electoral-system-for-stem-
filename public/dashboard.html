@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STEM Elections - Dashboard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ===== PROFESSIONAL ELECTION DASHBOARD STYLES ===== */
+        :root {
+            --primary-blue: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-blue: #3498db;
+            --accent-purple: #7c3aed;
+            --dark-blue: #1e293b;
+            --light-blue: #ebf5fb;
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --danger-red: #ef4444;
+            --gray-light: #f8fafc;
+            --gray-medium: #e9ecef;
+            --gray-dark: #64748b;
+            --text-dark: #1e293b;
+            --white: #ffffff;
+            --sidebar-bg: #1e293b;
+            --sidebar-link: #cbd5e1;
+            --active-link-bg: #2563eb;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.15);
+            --radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--gray-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, var(--sidebar-bg), #0f172a);
+            color: var(--white);
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow);
+            position: fixed;
+            height: 100vh;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-purple));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-main {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+            line-height: 1;
+        }
+
+        .brand-sub {
+            font-size: 0.8rem;
+            color: var(--sidebar-link);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+            flex-grow: 1;
+        }
+
+        .menu-section {
+            padding: 0 20px;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            color: var(--sidebar-link);
+            text-decoration: none;
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+            font-weight: 500;
+            gap: 15px;
+            margin: 0 10px;
+            border-radius: var(--radius);
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.08);
+            color: var(--white);
+            transform: translateX(5px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-purple));
+            color: var(--white);
+            box-shadow: var(--shadow);
+            border-left-color: var(--secondary-blue);
+        }
+
+        .nav-item .material-icons {
+            font-size: 1.4em;
+            opacity: 0.9;
+            width: 24px;
+            text-align: center;
+        }
+
+        .nav-footer {
+            margin-top: auto;
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #logout-btn {
+            width: 100%;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-red);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        #logout-btn:hover {
+            background: var(--danger-red);
+            color: var(--white);
+            transform: none;
+        }
+
+        /* ===== MOBILE TOGGLE BUTTON ===== */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1100;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+        }
+
+        .mobile-toggle .material-icons {
+            font-size: 1.5rem;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 40px;
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        /* Header */
+        .dashboard-header {
+            margin-bottom: 30px;
+        }
+
+        .welcome-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .welcome-text h1 {
+            font-size: 2.2em;
+            font-weight: 700;
+            color: var(--dark-blue);
+            margin-bottom: 8px;
+        }
+
+        .welcome-text p {
+            font-size: 1.1em;
+            color: var(--gray-dark);
+            font-weight: 400;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* ===== ENHANCED STATS CARDS ===== */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-top: 4px solid var(--primary-blue);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-blue);
+        }
+
+        .stat-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .stat-card h3 {
+            font-size: 0.9em;
+            color: var(--gray-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .stat-icon-container {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .stat-card-content {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            margin-top: auto;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--dark-blue);
+            line-height: 1;
+            margin: 10px 0;
+        }
+
+        .stat-trend {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+        }
+
+        .trend {
+            font-size: 0.85em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .trend.up {
+            color: var(--success-green);
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .trend.down {
+            color: var(--danger-red);
+            background: rgba(239, 68, 68, 0.1);
+        }
+
+        .trend .material-icons {
+            font-size: 1.2em;
+        }
+
+        .trend-value {
+            font-size: 0.8em;
+            color: var(--gray-dark);
+            font-weight: 500;
+        }
+
+        /* Specific card color variations */
+        .stat-card:nth-child(1) {
+            border-top-color: var(--primary-blue);
+        }
+
+        .stat-card:nth-child(1) .stat-icon-container {
+            background: linear-gradient(135deg, var(--primary-blue), #3b82f6);
+        }
+
+        .stat-card:nth-child(2) {
+            border-top-color: var(--success-green);
+        }
+
+        .stat-card:nth-child(2) .stat-icon-container {
+            background: linear-gradient(135deg, var(--success-green), #34d399);
+        }
+
+        .stat-card:nth-child(3) {
+            border-top-color: var(--warning-orange);
+        }
+
+        .stat-card:nth-child(3) .stat-icon-container {
+            background: linear-gradient(135deg, var(--warning-orange), #f59e0b);
+        }
+
+        .stat-card:nth-child(4) {
+            border-top-color: var(--danger-red);
+        }
+
+        .stat-card:nth-child(4) .stat-icon-container {
+            background: linear-gradient(135deg, var(--danger-red), #f87171);
+        }
+
+        /* ===== DASHBOARD LAYOUT ===== */
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .main-column {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .side-column {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* ===== DASHBOARD CARDS ===== */
+        .dashboard-card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            padding: 25px;
+            transition: var(--transition);
+        }
+
+        .dashboard-card:hover {
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--gray-medium);
+        }
+
+        .card-title {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--dark-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title .material-icons {
+            color: var(--primary-blue);
+        }
+
+        .view-all {
+            color: var(--primary-blue);
+            font-weight: 500;
+            text-decoration: none;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Ongoing Elections */
+        .election-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--gray-medium);
+        }
+
+        .election-item:last-child {
+            border-bottom: none;
+        }
+
+        .election-info h4 {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--dark-blue);
+        }
+
+        .election-info p {
+            font-size: 0.9em;
+            color: var(--gray-dark);
+        }
+
+        .vote-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .vote-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Calendar */
+        .calendar-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .calendar-period {
+            font-weight: 600;
+            color: var(--dark-blue);
+        }
+
+        .calendar-days {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .calendar-day {
+            text-align: center;
+            padding: 8px;
+            border-radius: 6px;
+            background: var(--gray-light);
+            font-weight: 500;
+        }
+
+        .calendar-day.active {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .calendar-times {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .calendar-time {
+            text-align: center;
+            padding: 5px;
+            font-size: 0.8em;
+            color: var(--gray-dark);
+        }
+
+        .calendar-event {
+            background: var(--light-blue);
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 10px;
+            border-left: 3px solid var(--primary-blue);
+        }
+
+        .calendar-event p {
+            font-size: 0.9em;
+            font-weight: 500;
+            color: var(--dark-blue);
+        }
+
+        /* Live Results */
+        .result-item {
+            margin-bottom: 15px;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .result-title {
+            font-weight: 600;
+            color: var(--dark-blue);
+        }
+
+        .result-percentage {
+            font-weight: 600;
+            color: var(--primary-blue);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--gray-medium);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-blue), var(--accent-purple));
+            border-radius: 4px;
+        }
+
+        /* Voting Process */
+        .voting-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .voting-stat {
+            text-align: center;
+            padding: 15px;
+            background: var(--gray-light);
+            border-radius: 8px;
+        }
+
+        .voting-number {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+        }
+
+        .voting-label {
+            font-size: 0.85em;
+            color: var(--gray-dark);
+        }
+
+        /* Election Activities */
+        .activity-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .activity-stat {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            color: white;
+        }
+
+        .activity-stat.ongoing {
+            background: linear-gradient(135deg, var(--success-green), #34d399);
+        }
+
+        .activity-stat.pending {
+            background: linear-gradient(135deg, var(--warning-orange), #f59e0b);
+        }
+
+        .activity-stat.concluded {
+            background: linear-gradient(135deg, var(--gray-dark), #94a3b8);
+        }
+
+        .activity-number {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .activity-label {
+            font-size: 0.85em;
+            opacity: 0.9;
+        }
+
+        /* Election Positions */
+        .position-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-medium);
+        }
+
+        .position-item:last-child {
+            border-bottom: none;
+        }
+
+        .position-info h4 {
+            font-weight: 600;
+            margin-bottom: 3px;
+            color: var(--dark-blue);
+        }
+
+        .position-date {
+            font-size: 0.8em;
+            color: var(--gray-dark);
+        }
+
+        .position-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .status-ongoing {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-green);
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-orange);
+        }
+
+        .status-concluded {
+            background: rgba(100, 116, 139, 0.1);
+            color: var(--gray-dark);
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                width: 280px;
+            }
+            
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .mobile-toggle {
+                display: flex;
+            }
+            
+            .overlay.active {
+                display: block;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 70px 20px 20px;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .welcome-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .voting-stats, .activity-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-content {
+                padding: 70px 15px 15px;
+            }
+            
+            .calendar-days, .calendar-times {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Toggle Button -->
+    <button class="mobile-toggle" id="mobileToggle">
+        <span class="material-icons">menu</span>
+    </button>
+
+    <!-- Overlay for mobile -->
+    <div class="overlay" id="overlay"></div>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="images/stem.jpg" alt="STEM Logo" class="brand-logo">
+                <div class="brand-text">
+                    <div class="brand-main">STEM</div>
+                    <div class="brand-sub">Election System</div>
+                </div>
+            </div>
+
+            <ul class="sidebar-menu">
+                <div class="menu-section">
+                    <div class="section-title">Main Navigation</div>
+                    <a href="dashboard.html" class="nav-item active">
+                        <span class="material-icons">space_dashboard</span>
+                        Dashboard
+                    </a>
+                    <a href="nominate.html" class="nav-item">
+                        <span class="material-icons">campaign</span>
+                        Campaign
+                    </a>
+                    <a href="vote.html" class="nav-item">
+                        <span class="material-icons">how_to_vote</span>
+                        Voting
+                    </a>
+                    <a href="results.html" class="nav-item">
+                        <span class="material-icons">bar_chart</span>
+                        Results
+                    </a>
+                </div>
+
+                <div class="menu-section">
+                    <div class="section-title">Account</div>
+                    <a href="profile.html" class="nav-item">
+                        <span class="material-icons">person</span>
+                        Profile
+                    </a>
+                    <a href="settings.html" class="nav-item">
+                        <span class="material-icons">settings</span>
+                        Settings
+                    </a>
+                </div>
+            </ul>
+
+            <div class="nav-footer">
+                <button id="logout-btn" class="nav-item">
+                    <span class="material-icons">logout</span>
+                    Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="dashboard-header">
+                <div class="welcome-section">
+                    <div class="welcome-text">
+                        <h1 id="welcomeTitle">Hello, Alex!</h1>
+                        <p>Welcome to STEM's Online Voting System</p>
+                    </div>
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar">AJ</div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <h3>Total Users</h3>
+                        <div class="stat-icon-container">
+                            <span class="material-icons">groups</span>
+                        </div>
+                    </div>
+                    <div class="stat-card-content">
+                        <div class="stat-number">1,247</div>
+                        <div class="stat-trend">
+                            <div class="trend up">
+                                <span class="material-icons">trending_up</span> 12%
+                            </div>
+                            <div class="trend-value">vs last week</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <h3>Active Candidates</h3>
+                        <div class="stat-icon-container">
+                            <span class="material-icons">person</span>
+                        </div>
+                    </div>
+                    <div class="stat-card-content">
+                        <div class="stat-number">8</div>
+                        <div class="stat-trend">
+                            <div class="trend up">
+                                <span class="material-icons">trending_up</span> 9%
+                            </div>
+                            <div class="trend-value">vs last week</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <h3>Votes Cast</h3>
+                        <div class="stat-icon-container">
+                            <span class="material-icons">how_to_vote</span>
+                        </div>
+                    </div>
+                    <div class="stat-card-content">
+                        <div class="stat-number">892</div>
+                        <div class="stat-trend">
+                            <div class="trend up">
+                                <span class="material-icons">trending_up</span> 24%
+                            </div>
+                            <div class="trend-value">vs last week</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <h3>Pending Approvals</h3>
+                        <div class="stat-icon-container">
+                            <span class="material-icons">pending_actions</span>
+                        </div>
+                    </div>
+                    <div class="stat-card-content">
+                        <div class="stat-number">3</div>
+                        <div class="stat-trend">
+                            <div class="trend down">
+                                <span class="material-icons">warning</span> Attention
+                            </div>
+                            <div class="trend-value">requires action</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Layout -->
+            <div class="dashboard-layout">
+                <!-- Main Column -->
+                <div class="main-column">
+                    <!-- Ongoing Elections -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <span class="material-icons">event_available</span>
+                                Ongoing Elections
+                            </h3>
+                            <a href="#" class="view-all">
+                                View All <span class="material-icons">chevron_right</span>
+                            </a>
+                        </div>
+                        <div class="election-item">
+                            <div class="election-info">
+                                <h4>President Student Council</h4>
+                                <p>Voting ends in 2 days</p>
+                            </div>
+                            <button class="vote-btn" onclick="window.location.href='vote.html'">
+                                <span class="material-icons">how_to_vote</span>
+                                Vote Now
+                            </button>
+                        </div>
+                        <div class="election-item">
+                            <div class="election-info">
+                                <h4>Department Representative</h4>
+                                <p>Voting ends in 5 days</p>
+                            </div>
+                            <button class="vote-btn" onclick="window.location.href='vote.html'">
+                                <span class="material-icons">how_to_vote</span>
+                                Vote Now
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Calendar -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <span class="material-icons">calendar_today</span>
+                                Calendar
+                            </h3>
+                        </div>
+                        <div class="calendar-nav">
+                            <span class="calendar-period">December 2024</span>
+                        </div>
+                        <div class="calendar-days">
+                            <div class="calendar-day">Today</div>
+                            <div class="calendar-day">Next Week</div>
+                            <div class="calendar-day active">This Month</div>
+                        </div>
+                        <div class="calendar-times">
+                            <div class="calendar-time">7:00</div>
+                            <div class="calendar-time">8:00</div>
+                            <div class="calendar-time">9:00</div>
+                            <div class="calendar-time">10:00</div>
+                        </div>
+                        <div class="calendar-event">
+                            <p>President Student Council Election</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Side Column -->
+                <div class="side-column">
+                    <!-- Live Results -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <span class="material-icons">live_tv</span>
+                                Live Results
+                            </h3>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-header">
+                                <span class="result-title">President Student Council</span>
+                                <span class="result-percentage">65%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-header">
+                                <span class="result-title">Vice President</span>
+                                <span class="result-percentage">42%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 42%"></div>
+                            </div>
+                        </div>
+                        <div class="result-item">
+                            <div class="result-header">
+                                <span class="result-title">Secretary</span>
+                                <span class="result-percentage">78%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 78%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Voting Process -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <span class="material-icons">poll</span>
+                                Voting Process
+                            </h3>
+                        </div>
+                        <div class="voting-stats">
+                            <div class="voting-stat">
+                                <div class="voting-number">362</div>
+                                <div class="voting-label">Registered Voters</div>
+                            </div>
+                            <div class="voting-stat">
+                                <div class="voting-number">344</div>
+                                <div class="voting-label">Votes Cast</div>
+                            </div>
+                            <div class="voting-stat">
+                                <div class="voting-number">8</div>
+                                <div class="voting-label">Candidates</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Election Activities -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <span class="material-icons">assignment</span>
+                                Election Activities
+                            </h3>
+                        </div>
+                        <div class="activity-stats">
+                            <div class="activity-stat ongoing">
+                                <div class="activity-number">2</div>
+                                <div class="activity-label">Ongoing</div>
+                            </div>
+                            <div class="activity-stat pending">
+                                <div class="activity-number">1</div>
+                                <div class="activity-label">Pending</div>
+                            </div>
+                            <div class="activity-stat concluded">
+                                <div class="activity-number">3</div>
+                                <div class="activity-label">Concluded</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Election Positions -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <span class="material-icons">business_center</span>
+                                Election Positions
+                            </h3>
+                        </div>
+                        <div class="position-item">
+                            <div class="position-info">
+                                <h4>President Student Council</h4>
+                                <div class="position-date">10/21/2024</div>
+                            </div>
+                            <div class="position-status status-ongoing">Ongoing</div>
+                        </div>
+                        <div class="position-item">
+                            <div class="position-info">
+                                <h4>Vice President</h4>
+                                <div class="position-date">11/05/2024</div>
+                            </div>
+                            <div class="position-status status-pending">Pending</div>
+                        </div>
+                        <div class="position-item">
+                            <div class="position-info">
+                                <h4>Secretary</h4>
+                                <div class="position-date">09/15/2024</div>
+                            </div>
+                            <div class="position-status status-concluded">Concluded</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // User Data Management for Dashboard
+        const DashboardUser = {
+            init: function() {
+                this.loadUserData();
+                this.setupEventListeners();
+            },
+            
+            loadUserData: function() {
+                const userData = JSON.parse(localStorage.getItem('stemUserData') || '{}');
+                
+                if (userData.firstName && userData.lastName) {
+                    // Update welcome message
+                    const welcomeTitle = document.getElementById('welcomeTitle');
+                    if (welcomeTitle) {
+                        welcomeTitle.textContent = `Hello, ${userData.firstName}!`;
+                    }
+                    
+                    // Update user avatar in header
+                    const userAvatar = document.getElementById('userAvatar');
+                    if (userAvatar) {
+                        userAvatar.textContent = userData.firstName.charAt(0) + userData.lastName.charAt(0);
+                        
+                        // If there's a profile image, use it instead of initials
+                        if (userData.profileImage) {
+                            userAvatar.innerHTML = '';
+                            const img = document.createElement('img');
+                            img.src = userData.profileImage;
+                            img.alt = `${userData.firstName} ${userData.lastName}`;
+                            img.style.width = '100%';
+                            img.style.height = '100%';
+                            img.style.borderRadius = '50%';
+                            img.style.objectFit = 'cover';
+                            userAvatar.appendChild(img);
+                        }
+                    }
+                }
+            },
+            
+            setupEventListeners: function() {
+                // Listen for profile updates from other tabs/pages
+                window.addEventListener('storage', (e) => {
+                    if (e.key === 'stemUserData' || e.key === 'forceProfileImageUpdate') {
+                        this.loadUserData();
+                    }
+                });
+                
+                // Listen for custom events (same tab)
+                window.addEventListener('userProfileUpdated', (e) => {
+                    this.loadUserData();
+                });
+                
+                // Check for updates periodically (fallback)
+                setInterval(() => {
+                    this.loadUserData();
+                }, 2000);
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize dashboard user data
+            DashboardUser.init();
+            
+            const mobileToggle = document.getElementById('mobileToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const navItems = document.querySelectorAll('.nav-item');
+            const logoutBtn = document.getElementById('logout-btn');
+            const voteButtons = document.querySelectorAll('.vote-btn');
+
+            // Mobile sidebar toggle
+            function toggleSidebar() {
+                sidebar.classList.toggle('mobile-open');
+                overlay.classList.toggle('active');
+            }
+
+            mobileToggle.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', toggleSidebar);
+
+            // Close sidebar when clicking on nav items on mobile
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    if (window.innerWidth <= 768) {
+                        toggleSidebar();
+                    }
+                    
+                    if (this.id !== 'logout-btn') {
+                        navItems.forEach(i => i.classList.remove('active'));
+                        this.classList.add('active');
+                    }
+                });
+            });
+
+            // Logout functionality
+            logoutBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to log out?')) {
+                    console.log('User logged out');
+                    // Redirect to login page
+                    // window.location.href = 'login.html';
+                }
+            });
+
+            // Close sidebar when window is resized to desktop size
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    sidebar.classList.remove('mobile-open');
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
