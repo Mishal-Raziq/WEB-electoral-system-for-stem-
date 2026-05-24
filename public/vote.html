@@ -9,28 +9,38 @@
     <style>
         /* ===== PROFESSIONAL ELECTION DASHBOARD STYLES ===== */
         :root {
-            --primary-blue: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary-blue: #3498db;
-            --accent-purple: #7c3aed;
-            --dark-blue: #1e293b;
-            --light-blue: #ebf5fb;
-            --success-green: #10b981;
-            --warning-orange: #f59e0b;
-            --danger-red: #ef4444;
-            --gray-light: #f8fafc;
-            --gray-medium: #e9ecef;
-            --gray-dark: #64748b;
-            --text-dark: #1e293b;
-            --white: #ffffff;
-            --sidebar-bg: #1e293b;
-            --sidebar-link: #cbd5e1;
-            --active-link-bg: #2563eb;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.15);
-            --radius: 8px;
-            --transition: all 0.3s ease;
-        }
+  /* Core Brand Colors */
+  --primary-blue: #4F7C82;      /* primary */
+  --primary-dark: #027687;      /* darker primary */
+  --secondary-blue: #008480;    /* secondary */
+  --accent-purple: #B8E3E9;     /* accent */
+
+  /* Neutrals */
+  --dark-blue: #1e293b;
+  --light-blue: #f8fafc;
+  --gray-light: #f8fafc;
+  --gray-medium: #e9ecef;
+  --gray-dark: #64748b;
+  --text-dark: #1e293b;
+  --white: #ffffff;
+
+  /* Status Colors (keep standard UX colors) */
+  --success-green: #10b981;
+  --warning-orange: #f59e0b;
+  --danger-red: #ef4444;
+
+  /* Sidebar */
+  --sidebar-bg: #1e293b;
+  --sidebar-link: #cbd5e1;
+  --active-link-bg: #4F7C82;
+
+  /* Effects */
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+            0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.15);
+  --radius: 8px;
+  --transition: all 0.3s ease;
+}
 
         * {
             margin: 0;
@@ -1182,10 +1192,6 @@
                         <span class="material-icons">space_dashboard</span>
                         Dashboard
                     </a>
-                    <a href="nominate.html" class="nav-item">
-                        <span class="material-icons">campaign</span>
-                        Campaign
-                    </a>
                     <a class="nav-item active" data-target="vote">
                         <span class="material-icons">how_to_vote</span>
                         Voting
@@ -1201,10 +1207,6 @@
                     <a href="profile.html" class="nav-item">
                         <span class="material-icons">person</span>
                         Profile
-                    </a>
-                    <a class="nav-item" data-target="settings">
-                        <span class="material-icons">settings</span>
-                        Settings
                     </a>
                 </div>
             </ul>
@@ -1561,279 +1563,398 @@
             </div>
         </div>
     </div>
-     <script type="module" src="firebase.js"></script>
-     <script type="module" src="vote.js"></script>
+   <!-- Add this script tag right before </body> -->
+<script type="module">
+  // Import Firebase modules
+  import { auth, db } from "./js/firebase.js";
+  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { 
+    doc, 
+    getDoc, 
+    setDoc, 
+    serverTimestamp,
+    collection,
+    query,
+    where,
+    getDocs 
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // DOM Elements
-            const mobileToggle = document.getElementById('mobileToggle');
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            const navItems = document.querySelectorAll('.nav-item');
-            const logoutBtn = document.getElementById('logout-btn');
-            const voteButtons = document.querySelectorAll('.vote-btn');
-            const candidateCards = document.querySelectorAll('.candidate-card');
-            const submitBtn = document.getElementById('submitVote');
-            const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toast-message');
-            const viewDetailsBtns = document.querySelectorAll('.view-details-btn');
-            const successModal = document.getElementById('successModal');
-            const closeModal = document.getElementById('closeModal');
-            const confettiContainer = document.getElementById('confettiContainer');
+  // DOM Elements
+  const mobileToggle = document.getElementById('mobileToggle');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  const navItems = document.querySelectorAll('.nav-item');
+  const logoutBtn = document.getElementById('logout-btn');
+  const voteButtons = document.querySelectorAll('.vote-btn');
+  const candidateCards = document.querySelectorAll('.candidate-card');
+  const submitBtn = document.getElementById('submitVote');
+  const toast = document.getElementById('toast');
+  const toastMessage = document.getElementById('toast-message');
+  const viewDetailsBtns = document.querySelectorAll('.view-details-btn');
+  const successModal = document.getElementById('successModal');
+  const closeModal = document.getElementById('closeModal');
+  const confettiContainer = document.getElementById('confettiContainer');
+  const votingAnimation = document.getElementById('votingAnimation');
+  const ballotPaper = document.getElementById('ballotPaper');
+  const voteText = document.getElementById('voteText');
+  const ballotBox = document.querySelector('.ballot-box');
+
+  // Vote tracking
+  let userVotes = {
+    president: null,
+    'vice-president': null,
+    secretary: null,
+    treasurer: null
+  };
+
+  // Check if user has already voted
+  let hasUserVoted = false;
+
+  // Mobile sidebar toggle
+  function toggleSidebar() {
+    sidebar.classList.toggle('mobile-open');
+    overlay.classList.toggle('active');
+  }
+
+  mobileToggle.addEventListener('click', toggleSidebar);
+  overlay.addEventListener('click', toggleSidebar);
+
+  // Navigation functionality
+  navItems.forEach(item => {
+    item.addEventListener('click', function() {
+      const target = this.getAttribute('data-target');
+      
+      // Update active nav item
+      navItems.forEach(i => i.classList.remove('active'));
+      this.classList.add('active');
+      
+      // Show target content section
+      document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
+      document.getElementById(target).classList.add('active');
+      
+      // Close sidebar on mobile
+      if (window.innerWidth <= 768) {
+        toggleSidebar();
+      }
+    });
+  });
+
+  // Toast notification function
+  function showToast(message, type = 'success') {
+    toastMessage.textContent = message;
+    toast.className = 'toast ' + type;
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3000);
+  }
+
+  // Check if all positions have votes
+  function checkVoteCompletion() {
+    const allVoted = Object.values(userVotes).every(vote => vote !== null);
+    submitBtn.disabled = !allVoted;
+  }
+
+  // Check if user has already voted
+  async function checkIfUserVoted(userId) {
+    try {
+        const votesRef = collection(db, 'votes');
+        const positions = ['president', 'vice-president', 'secretary', 'treasurer'];
+        let voteCount = 0;
+        
+        for (const position of positions) {
+            // FIX: Query votes by userId and position
+            const q = query(votesRef, 
+                where("userId", "==", userId),
+                where("position", "==", position)
+            );
+            const querySnapshot = await getDocs(q);
             
-            // 3D Animation Elements
-            const votingAnimation = document.getElementById('votingAnimation');
-            const ballotPaper = document.getElementById('ballotPaper');
-            const voteText = document.getElementById('voteText');
-            const ballotBox = document.querySelector('.ballot-box');
-
-            // Vote tracking - ADDED TREASURER
-            const userVotes = {
-                president: null,
-                'vice-president': null,
-                secretary: null,
-                treasurer: null  // Added treasurer position
-            };
-
-            // Mobile sidebar toggle
-            function toggleSidebar() {
-                sidebar.classList.toggle('mobile-open');
-                overlay.classList.toggle('active');
-            }
-
-            mobileToggle.addEventListener('click', toggleSidebar);
-            overlay.addEventListener('click', toggleSidebar);
-
-            // Navigation functionality
-            navItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    const target = this.getAttribute('data-target');
-                    
-                    // Update active nav item
-                    navItems.forEach(i => i.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Show target content section
-                    document.querySelectorAll('.content-section').forEach(section => section.classList.remove('active'));
-                    document.getElementById(target).classList.add('active');
-                    
-                    // Close sidebar on mobile
-                    if (window.innerWidth <= 768) {
-                        toggleSidebar();
-                    }
-                });
-            });
-
-            // Vote button functionality
-            voteButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const position = this.getAttribute('data-position');
-                    const candidate = this.getAttribute('data-candidate');
-                    const candidateName = this.closest('.candidate-card').querySelector('.candidate-name').textContent;
-                    
-                    // Clear previous selection for this position
-                    document.querySelectorAll(`.candidate-card[data-position="${position}"]`).forEach(card => {
-                        card.classList.remove('selected');
-                        card.querySelector('.vote-btn').classList.remove('voted');
-                        card.querySelector('.vote-btn').innerHTML = '<span class="material-icons">how_to_vote</span> VOTE';
-                    });
-                    
-                    // Select this candidate
-                    this.closest('.candidate-card').classList.add('selected');
-                    this.classList.add('voted');
-                    this.innerHTML = '<span class="material-icons">check</span> VOTED';
-                    
-                    // Update user votes
-                    userVotes[position] = candidateName;
-                    
-                    // Update vote summary
-                    document.getElementById(`${position}-summary`).textContent = candidateName;
-                    
-                    // Check if all positions have votes
-                    checkVoteCompletion();
-                    
-                    // Show confirmation
-                    showToast(`Voted for ${candidateName} as ${position.replace('-', ' ').toUpperCase()}`);
-                });
-            });
-
-            // Candidate card click (alternative to button)
-            candidateCards.forEach(card => {
-                card.addEventListener('click', function(e) {
-                    if (!e.target.closest('.vote-btn') && !e.target.closest('.view-details-btn')) {
-                        const voteBtn = this.querySelector('.vote-btn');
-                        if (voteBtn) voteBtn.click();
-                    }
-                });
-            });
-
-            // View Details button functionality
-            viewDetailsBtns.forEach(button => {
-                button.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const candidateCard = this.closest('.candidate-card');
-                    const candidateName = candidateCard.querySelector('.candidate-name').textContent;
-                    const candidateDepartment = candidateCard.querySelector('.candidate-department').textContent;
-                    const candidatePlatform = candidateCard.querySelector('.candidate-platform').textContent;
-                    
-                    // Show candidate details in a modal or alert
-                    alert(`Candidate Details:\n\nName: ${candidateName}\nDepartment: ${candidateDepartment}\nPlatform: ${candidatePlatform}`);
-                });
-            });
-
-            // Check if all positions have votes - UPDATED FOR TREASURER
-            function checkVoteCompletion() {
-                const allVoted = Object.values(userVotes).every(vote => vote !== null);
-                submitBtn.disabled = !allVoted;
-            }
-
-            // Submit vote
-            submitBtn.addEventListener('click', function() {
-                if (!this.disabled) {
-                    // Show 3D voting animation
-                    showVotingAnimation();
-                }
-            });
-
-            // FIXED 3D Voting Animation
-            function showVotingAnimation() {
-                // Show the animation container
-                votingAnimation.classList.add('active');
-                
-                // Reset animation elements
-                ballotPaper.style.opacity = '1';
-                ballotPaper.style.transform = 'translateY(0) rotate(0deg) scale(1)';
-                ballotPaper.style.animation = 'none';
-                voteText.style.opacity = '0';
-                voteText.style.animation = 'none';
-                ballotBox.style.animation = 'none';
-                
-                // Start the animation sequence
-                setTimeout(() => {
-                    // Animate the ballot paper flying to the box
-                    ballotPaper.style.animation = 'flyToBox 2s forwards';
-                    
-                    // Add box shake effect when paper enters
-                    setTimeout(() => {
-                        ballotBox.style.animation = 'boxShake 0.5s ease-in-out';
-                    }, 1500);
-                    
-                    // Show success text
-                    setTimeout(() => {
-                        voteText.style.animation = 'fadeInText 1s forwards';
-                    }, 2000);
-                    
-                    // Transition to success modal
-                    setTimeout(() => {
-                        votingAnimation.classList.remove('active');
-                        showSuccessModal();
-                    }, 3500);
-                }, 500);
-            }
-
-            // Show success modal after animation
-            function showSuccessModal() {
-                // Show success modal
-                successModal.classList.add('active');
-                
-                // Create confetti effect
-                createConfetti();
-                
-                // Disable all vote buttons
-                voteButtons.forEach(btn => {
-                    btn.disabled = true;
-                });
-                
-                // Change submit button
-                submitBtn.innerHTML = '<span class="material-icons">check_circle</span> VOTE SUBMITTED';
-                submitBtn.style.background = 'linear-gradient(135deg, var(--success-green), #34d399)';
-                submitBtn.disabled = true;
-
-                // Store votes in localStorage (for demo purposes)
-                storeVotesInDatabase();
-            }
-
-            // Store votes in database (localStorage for demo)
-            function storeVotesInDatabase() {
-                const votes = {
-                    timestamp: new Date().toISOString(),
-                    positions: userVotes
+            if (!querySnapshot.empty) {
+                voteCount++;
+                const voteData = querySnapshot.docs[0].data();
+                userVotes[position] = {
+                    id: voteData.candidateId,
+                    name: voteData.candidateName
                 };
-                
-                // Get existing votes or initialize empty array
-                const existingVotes = JSON.parse(localStorage.getItem('stemVotes')) || [];
-                existingVotes.push(votes);
-                
-                // Save to localStorage
-                localStorage.setItem('stemVotes', JSON.stringify(existingVotes));
-                
-                console.log('Votes stored:', votes);
+                document.getElementById(`${position}-summary`).textContent = voteData.candidateName;
             }
-
-            // Close modal
-            closeModal.addEventListener('click', function() {
-                successModal.classList.remove('active');
-                // Redirect to results page or dashboard
-                // window.location.href = 'results.html';
+        }
+        
+        // If user has voted for all positions, disable everything
+        if (voteCount === positions.length) {
+            hasUserVoted = true;
+            
+            // Disable all vote buttons
+            document.querySelectorAll('.vote-btn').forEach(btn => {
+                btn.disabled = true;
+                btn.innerHTML = '<span class="material-icons">check</span> VOTED';
+                btn.style.background = 'var(--success-green)';
             });
+            
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="material-icons">check_circle</span> VOTE SUBMITTED';
+            submitBtn.style.background = 'linear-gradient(135deg, var(--success-green), #34d399)';
+            
+            showToast('You have already submitted your vote.', 'warning');
+            return true;
+        }
+        return false;
+    } catch (error) {
+        console.error('Error checking if user voted:', error);
+        return false;
+    }
+}
 
-            // Create confetti effect
-            function createConfetti() {
-                const confettiCount = 150;
-                
-                for (let i = 0; i < confettiCount; i++) {
-                    const confetti = document.createElement('div');
-                    confetti.className = 'confetti';
-                    confetti.style.left = Math.random() * 100 + '%';
-                    confetti.style.animationDelay = Math.random() * 5 + 's';
-                    confetti.style.width = (Math.random() * 10 + 8) + 'px';
-                    confetti.style.height = confetti.style.width;
-                    confettiContainer.appendChild(confetti);
-                }
-            }
+  // Vote button functionality
+  voteButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      // Prevent voting if user already submitted ALL votes
+      if (hasUserVoted) {
+        showToast('You have already submitted your vote.', 'error');
+        return;
+      }
+      
+      const position = this.getAttribute('data-position');
+      const candidateId = this.getAttribute('data-candidate');
+      const candidateName = this.closest('.candidate-card').querySelector('.candidate-name').textContent;
+      
+      // Clear previous selection for this position
+      document.querySelectorAll(`.candidate-card[data-position="${position}"]`).forEach(card => {
+        card.classList.remove('selected');
+        card.querySelector('.vote-btn').classList.remove('voted');
+        card.querySelector('.vote-btn').innerHTML = '<span class="material-icons">how_to_vote</span> VOTE';
+      });
+      
+      // Select this candidate
+      this.closest('.candidate-card').classList.add('selected');
+      this.classList.add('voted');
+      this.innerHTML = '<span class="material-icons">check</span> VOTED';
+      
+      // Update user votes
+      userVotes[position] = {
+        id: candidateId,
+        name: candidateName
+      };
+      
+      // Update vote summary
+      document.getElementById(`${position}-summary`).textContent = candidateName;
+      
+      // Check if all positions have votes
+      checkVoteCompletion();
+      
+      // Show confirmation
+      showToast(`Selected ${candidateName} for ${position.replace('-', ' ').toUpperCase()}`);
+    });
+  });
 
-            // Logout functionality
-            logoutBtn.addEventListener('click', function() {
-                if (confirm('Are you sure you want to log out?')) {
-                    showToast('You have been logged out successfully.', 'success');
-                    // Redirect to login page after delay
-                    setTimeout(() => {
-                        window.location.href = 'login.html';
-                    }, 1500);
-                }
-            });
+  // Candidate card click (alternative to button)
+  candidateCards.forEach(card => {
+    card.addEventListener('click', function(e) {
+      if (!e.target.closest('.vote-btn') && !e.target.closest('.view-details-btn')) {
+        const voteBtn = this.querySelector('.vote-btn');
+        if (voteBtn) voteBtn.click();
+      }
+    });
+  });
 
-            // Toast notification function
-            function showToast(message, type = 'success') {
-                toastMessage.textContent = message;
-                toast.className = 'toast ' + type;
-                toast.classList.add('show');
-                
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 3000);
-            }
+  // View Details button functionality
+  viewDetailsBtns.forEach(button => {
+    button.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const candidateCard = this.closest('.candidate-card');
+      const candidateName = candidateCard.querySelector('.candidate-name').textContent;
+      const candidateDepartment = candidateCard.querySelector('.candidate-department').textContent;
+      const candidatePlatform = candidateCard.querySelector('.candidate-platform').textContent;
+      
+      // Show candidate details in a modal or alert
+      alert(`Candidate Details:\n\nName: ${candidateName}\nDepartment: ${candidateDepartment}\nPlatform: ${candidatePlatform}`);
+    });
+  });
 
-            // Close sidebar when window is resized to desktop size
-            window.addEventListener('resize', function() {
-                if (window.innerWidth > 768) {
-                    sidebar.classList.remove('mobile-open');
-                    overlay.classList.remove('active');
-                }
-            });
+  // FIXED 3D Voting Animation
+  function showVotingAnimation() {
+    // Show the animation container
+    votingAnimation.classList.add('active');
+    
+    // Reset animation elements
+    ballotPaper.style.opacity = '1';
+    ballotPaper.style.transform = 'translateY(0) rotate(0deg) scale(1)';
+    ballotPaper.style.animation = 'none';
+    voteText.style.opacity = '0';
+    voteText.style.animation = 'none';
+    ballotBox.style.animation = 'none';
+    
+    // Start the animation sequence
+    setTimeout(() => {
+      // Animate the ballot paper flying to the box
+      ballotPaper.style.animation = 'flyToBox 2s forwards';
+      
+      // Add box shake effect when paper enters
+      setTimeout(() => {
+        ballotBox.style.animation = 'boxShake 0.5s ease-in-out';
+      }, 1500);
+      
+      // Show success text
+      setTimeout(() => {
+        voteText.style.animation = 'fadeInText 1s forwards';
+      }, 2000);
+      
+      // Transition to success modal
+      setTimeout(() => {
+        votingAnimation.classList.remove('active');
+        showSuccessModal();
+      }, 3500);
+    }, 500);
+  }
 
-            // Check if user is logged in (basic authentication check)
-            function checkAuthentication() {
-                const isLoggedIn = localStorage.getItem('isLoggedIn');
-                if (!isLoggedIn) {
-                    window.location.href = 'login.html';
-                }
-            }
+  // Show success modal after animation
+  function showSuccessModal() {
+    // Show success modal
+    successModal.classList.add('active');
+    
+    // Create confetti effect
+    createConfetti();
+    
+    // Disable all vote buttons after successful submission
+    voteButtons.forEach(btn => {
+      btn.disabled = true;
+      btn.innerHTML = '<span class="material-icons">check</span> VOTED';
+      btn.style.background = 'var(--success-green)';
+    });
+    
+    // Change submit button
+    submitBtn.innerHTML = '<span class="material-icons">check_circle</span> VOTE SUBMITTED';
+    submitBtn.style.background = 'linear-gradient(135deg, var(--success-green), #34d399)';
+    submitBtn.disabled = true;
+  }
 
-            // Initialize authentication check
-            checkAuthentication();
-        });
-    </script>
+  // Create confetti effect
+  function createConfetti() {
+    const confettiCount = 150;
+    
+    for (let i = 0; i < confettiCount; i++) {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti';
+      confetti.style.left = Math.random() * 100 + '%';
+      confetti.style.animationDelay = Math.random() * 5 + 's';
+      confetti.style.width = (Math.random() * 10 + 8) + 'px';
+      confetti.style.height = confetti.style.width;
+      confettiContainer.appendChild(confetti);
+    }
+  }
+
+  // Close modal
+  closeModal.addEventListener('click', function() {
+    successModal.classList.remove('active');
+    // You can redirect if needed
+    // window.location.href = 'results.html';
+  });
+
+  // Submit vote to Firebase
+  async function submitVoteToFirebase() {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        showToast('Please login to vote', 'error');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const userId = user.uid;
+      const userEmail = user.email;
+      const timestamp = serverTimestamp();
+
+      // Save each vote to Firebase
+      for (const [position, candidate] of Object.entries(userVotes)) {
+        if (candidate) {
+          const voteId = `${position}_${userId}`;
+          const voteRef = doc(db, 'votes', voteId);
+          
+          await setDoc(voteRef, {
+            userId: userId,
+            userEmail: userEmail,
+            position: position,
+            candidateId: candidate.id,
+            candidateName: candidate.name,
+            timestamp: timestamp,
+            submittedAt: new Date().toISOString()
+          });
+        }
+      }
+
+      // Mark that user has voted
+      hasUserVoted = true;
+      
+      // Show success animation
+      showVotingAnimation();
+      
+    } catch (error) {
+      console.error('Error submitting vote:', error);
+      showToast('Error submitting vote. Please try again.', 'error');
+    }
+  }
+
+  // Submit vote button click
+  submitBtn.addEventListener('click', function() {
+    if (!this.disabled) {
+      // Submit to Firebase
+      submitVoteToFirebase();
+    }
+  });
+
+  // Logout functionality
+  logoutBtn.addEventListener('click', async function() {
+    if (confirm('Are you sure you want to log out?')) {
+      try {
+        // Import signOut function
+        const { signOut } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+        await signOut(auth);
+        showToast('You have been logged out successfully.', 'success');
+        
+        // Clear local storage if used
+        localStorage.removeItem('stemVotes');
+        
+        // Redirect to login page after delay
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 1500);
+      } catch (error) {
+        console.error('Error logging out:', error);
+        showToast('Error logging out. Please try again.', 'error');
+      }
+    }
+  });
+
+  // Close sidebar when window is resized to desktop size
+  window.addEventListener('resize', function() {
+    if (window.innerWidth > 768) {
+      sidebar.classList.remove('mobile-open');
+      overlay.classList.remove('active');
+    }
+  });
+
+  // Main initialization when DOM is loaded
+  document.addEventListener('DOMContentLoaded', async function() {
+    // Check authentication and voting status
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        // User is signed in
+        console.log('User logged in:', user.email);
+        
+        // Check if user has already voted
+        await checkIfUserVoted(user.uid);
+      } else {
+        // User is signed out
+        showToast('Please login to vote', 'error');
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 2000);
+      }
+    });
+  });
+</script>
 </body>
 </html>

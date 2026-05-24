@@ -7,10 +7,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --primary: #2563eb;
-      --primary-dark: #1d4ed8;
-      --secondary: #7034d8;
-      --accent: #06b6d4;
+      --primary:#4F7C82;
+     --primary-dark: #027687; 
+     --secondary: #008480; 
+     --accent: #B8E3E9;
       --light: #f8fafc;
       --dark: rgb(47, 50, 62);
       --gray: #64748b;
@@ -358,12 +358,6 @@
           Invalid email or password. Please try again.
         </div>
 
-        <div class="divider"><span>or continue with</span></div>
-
-        <button type="button" class="btn btn-google">
-          <i class="fab fa-google"></i> Google
-        </button>
-
         <div class="auth-links">
           <p>No account? <a href="signup.html" class="auth-link">Sign Up</a></p>
         </div>
@@ -391,66 +385,72 @@
       </div>
     </div>
   </div>
-     <script type="module" src="firebase.js"></script>
-  <script>
-    function togglePassword(inputId) {
-      const passwordInput = document.getElementById(inputId);
-      const toggleIcon = passwordInput.nextElementSibling.querySelector('i');
-      if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
-      } else {
-        passwordInput.type = 'password';
-        toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
+     <script type="module">
+  import { auth, db } from "./js/firebase.js";
+  import {
+    signInWithEmailAndPassword,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import {
+    doc,
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const emailInput = document.getElementById("email");
+  const passwordInput = document.getElementById("password");
+  const loginBtn = document.getElementById("loginBtn");
+  const loginSpinner = document.getElementById("loginSpinner");
+  const loginText = document.getElementById("loginText");
+  const errorMessage = document.getElementById("errorMessage");
+
+  document.getElementById("loginForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    loginBtn.disabled = true;
+    loginSpinner.style.display = "inline-block";
+    loginText.textContent = "SIGNING IN...";
+    errorMessage.style.display = "none";
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        emailInput.value,
+        passwordInput.value
+      );
+
+      const userDoc = await getDoc(
+        doc(db, "users", userCredential.user.uid)
+      );
+
+      if (!userDoc.exists()) {
+        throw new Error("User profile not found");
       }
+
+      window.location.href = "dashboard.html";
+    } catch (err) {
+      errorMessage.textContent = err.message;
+      errorMessage.style.display = "block";
+      loginBtn.disabled = false;
+      loginSpinner.style.display = "none";
+      loginText.textContent = "SIGN IN";
     }
+  });
 
-    // Login form handling
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const loginBtn = document.getElementById('loginBtn');
-      const loginSpinner = document.getElementById('loginSpinner');
-      const loginText = document.getElementById('loginText');
-      const errorMessage = document.getElementById('errorMessage');
-      
-      // Show loading state
-      loginBtn.disabled = true;
-      loginSpinner.style.display = 'inline-block';
-      loginText.textContent = 'SIGNING IN...';
-      errorMessage.style.display = 'none';
-      
-      // Simulate login process (replace with actual authentication)
-      setTimeout(() => {
-        // For demo purposes, accept any non-empty credentials
-        // In a real application, you would validate against your backend
-        if (email && password) {
-          // Store login state (in a real app, you'd use proper session management)
-          localStorage.setItem('isLoggedIn', 'true');
-          localStorage.setItem('userEmail', email);
-          
-          // Redirect to dashboard
-          window.location.href = 'dashboard.html';
-        } else {
-          // Show error message
-          errorMessage.style.display = 'block';
-          loginBtn.disabled = false;
-          loginSpinner.style.display = 'none';
-          loginText.textContent = 'SIGN IN';
-        }
-      }, 1500); // Simulate network delay
-    });
+</script>
+<script>
+  function togglePassword(inputId) {
+    const passwordInput = document.getElementById(inputId);
+    const toggleIcon = passwordInput.nextElementSibling.querySelector('i');
 
-    // Check if user is already logged in
-    document.addEventListener('DOMContentLoaded', function() {
-      const isLoggedIn = localStorage.getItem('isLoggedIn');
-      if (isLoggedIn === 'true') {
-        // If already logged in, redirect to dashboard
-        window.location.href = 'dashboard.html';
-      }
-    });
-  </script>
+    if (passwordInput.type === "password") {
+      passwordInput.type = "text";
+      toggleIcon.classList.replace("fa-eye", "fa-eye-slash");
+    } else {
+      passwordInput.type = "password";
+      toggleIcon.classList.replace("fa-eye-slash", "fa-eye");
+    }
+  }
+</script>
+
 </body>
 </html>

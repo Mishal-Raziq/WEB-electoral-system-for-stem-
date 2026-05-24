@@ -10,24 +10,35 @@
     <style>
         /* ===== PROFESSIONAL ELECTION DASHBOARD STYLES ===== */
         :root {
-            --primary-blue: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary-blue: #3498db;
-            --accent-purple: #7c3aed;
+            /* Core Brand Colors */
+            --primary-blue: #4F7C82;
+            --primary-dark: #027687;
+            --secondary-blue: #008480;
+            --accent-purple: #B8E3E9;
+
+            /* Neutrals */
             --dark-blue: #1e293b;
-            --light-blue: #ebf5fb;
-            --success-green: #10b981;
-            --warning-orange: #f59e0b;
-            --danger-red: #ef4444;
+            --light-blue: #f8fafc;
             --gray-light: #f8fafc;
             --gray-medium: #e9ecef;
             --gray-dark: #64748b;
             --text-dark: #1e293b;
             --white: #ffffff;
+
+            /* Status Colors */
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --danger-red: #ef4444;
+            --info-blue: #3b82f6;
+
+            /* Sidebar */
             --sidebar-bg: #1e293b;
             --sidebar-link: #cbd5e1;
-            --active-link-bg: #2563eb;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --active-link-bg: #4F7C82;
+
+            /* Effects */
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                    0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.15);
             --radius: 8px;
             --transition: all 0.3s ease;
@@ -697,6 +708,32 @@
                 height: 120px;
             }
         }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--gray-medium);
+            border-top: 4px solid var(--primary-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -718,7 +755,7 @@
         <!-- Sidebar Navigation -->
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
-               <img src="images/stem.jpg" alt="STEM Logo" class="brand-logo">
+                <img src="images/stem.jpg" alt="STEM Logo" class="brand-logo">
                 <div class="brand-text">
                     <div class="brand-main">STEM</div>
                     <div class="brand-sub">Election System</div>
@@ -731,10 +768,6 @@
                     <a href="dashboard.html" class="nav-item">
                         <span class="material-icons">space_dashboard</span>
                         Dashboard
-                    </a>
-                    <a href="nominate.html" class="nav-item">
-                        <span class="material-icons">campaign</span>
-                        Campaign
                     </a>
                     <a href="vote.html" class="nav-item">
                         <span class="material-icons">how_to_vote</span>
@@ -751,10 +784,6 @@
                     <a href="profile.html" class="nav-item active">
                         <span class="material-icons">person</span>
                         Profile
-                    </a>
-                    <a href="settings.html" class="nav-item">
-                        <span class="material-icons">settings</span>
-                        Settings
                     </a>
                 </div>
             </ul>
@@ -776,164 +805,130 @@
                         <p>Manage your profile information and election participation</p>
                     </div>
                     <div class="user-info">
-                        <div class="user-avatar" id="userAvatar">JD</div>
+                        <div class="user-avatar" id="userAvatar">
+                            <div class="loading-spinner hidden" id="avatarSpinner">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Profile Content -->
-            <div class="profile-container">
-                <!-- Profile Card -->
-                <div class="profile-card">
-                    <div class="profile-image-container">
-                        <img src="https://ui-avatars.com/api/?name=Juan+Dela+Cruz&background=2563eb&color=fff&size=150" alt="Profile Image" class="profile-image" id="profileImage">
-                        <button class="image-upload-btn" id="imageUploadBtn">
-                            <i class="fas fa-camera"></i>
-                        </button>
-                        <input type="file" id="imageUpload" accept="image/*" style="display: none;">
-                    </div>
-                    
-                    <h2 class="profile-name" id="profileName">Test User</h2>
-                    <p class="profile-role" id="profileRole">STEM Member</p>
-                    <p class="profile-department" id="profileDepartment">Computer Science Department</p>
-                    
-                    <div class="profile-stats">
-                        <div class="stat">
-                            <div class="stat-value">3</div>
-                            <div class="stat-label">Elections</div>
+            <!-- Loading State -->
+            <div class="loading-spinner" id="loadingSpinner">
+                <div class="spinner"></div>
+                <p style="margin-top: 20px; color: var(--gray-dark);">Loading profile data...</p>
+            </div>
+
+            <!-- Profile Content (Initially Hidden) -->
+            <div id="profileContent" class="hidden">
+                <div class="profile-container">
+                    <!-- Profile Card -->
+                    <div class="profile-card">
+                        <div class="profile-image-container">
+                            <img src="" alt="Profile Image" class="profile-image" id="profileImage">
+                            <input type="file" id="imageUpload" accept="image/*" style="display: none;">
                         </div>
-                        <div class="stat">
-                            <div class="stat-value">12</div>
-                            <div class="stat-label">Votes</div>
-                        </div>
-                        <div class="stat">
-                            <div class="stat-value">2</div>
-                            <div class="stat-label">Roles</div>
-                        </div>
-                    </div>
-                    
-                    <div class="profile-actions">
-                        <button class="btn btn-primary" id="editProfileBtn">
-                            <i class="fas fa-edit"></i> Edit Profile
-                        </button>
-                        <button class="btn btn-outline" id="changePasswordBtn">
-                            <i class="fas fa-key"></i> Change Password
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Profile Details -->
-                <div class="profile-details">
-                    <h3 class="section-title-profile">
-                        <i class="fas fa-info-circle"></i> Personal Information
-                    </h3>
-                    
-                    <div class="details-grid">
-                        <div class="detail-group">
-                            <div class="detail-label">First Name</div>
-                            <div class="detail-value editable">
-                                <span id="firstName">Juan</span>
-                                <button class="edit-btn" data-field="firstName">
-                                    <i class="fas fa-edit"></i>
-                                </button>
+                        
+                        <h2 class="profile-name" id="profileName">Loading...</h2>
+                        <p class="profile-role" id="profileRole">Loading...</p>
+                        <p class="profile-department" id="profileDepartment">Loading...</p>
+                        
+                        <div class="profile-stats">
+                            <div class="stat">
+                                <div class="stat-value" id="electionsCount">0</div>
+                                <div class="stat-label">Elections</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value" id="votesCount">0</div>
+                                <div class="stat-label">Votes</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value" id="rolesCount">1</div>
+                                <div class="stat-label">Roles</div>
                             </div>
                         </div>
                         
-                        <div class="detail-group">
-                            <div class="detail-label">Last Name</div>
-                            <div class="detail-value editable">
-                                <span id="lastName">User</span>
-                                <button class="edit-btn" data-field="lastName">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="detail-group">
-                            <div class="detail-label">Email</div>
-                            <div class="detail-value editable">
-                                <span id="email">juan.delacruz@stem.edu</span>
-                                <button class="edit-btn" data-field="email">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="detail-group">
-                            <div class="detail-label">STEM ID</div>
-                            <div class="detail-value">
-                                <span id="stemId">STEM-2024-00123</span>
-                            </div>
-                        </div>
-                        
-                        <div class="detail-group">
-                            <div class="detail-label">Department</div>
-                            <div class="detail-value editable">
-                                <span id="department">Computer Science</span>
-                                <button class="edit-btn" data-field="department">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div class="detail-group">
-                            <div class="detail-label">Member Since</div>
-                            <div class="detail-value">
-                                <span id="memberSince">January 2023</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="detail-group">
-                        <div class="detail-label">Bio</div>
-                        <div class="detail-value editable">
-                            <span id="bio">Passionate about technology and community development. Currently serving as the Computer Science Department Representative.</span>
-                            <button class="edit-btn" data-field="bio">
-                                <i class="fas fa-edit"></i>
+                        <div class="profile-actions">
+                            <button class="btn btn-primary" id="editProfileBtn">
+                                <i class="fas fa-edit"></i> Edit Profile
+                            </button>
+                            <button class="btn btn-outline" id="changePasswordBtn">
+                                <i class="fas fa-key"></i> Change Password
                             </button>
                         </div>
                     </div>
                     
-                    <!-- Election Participation -->
-                    <div class="election-participation">
+                    <!-- Profile Details -->
+                    <div class="profile-details">
                         <h3 class="section-title-profile">
-                            <i class="fas fa-vote-yea"></i> Election Participation
+                            <i class="fas fa-info-circle"></i> Personal Information
                         </h3>
                         
-                        <div class="participation-item">
-                            <div class="election-icon">
-                                <i class="fas fa-user-tie"></i>
+                        <div class="details-grid">
+                            <div class="detail-group">
+                                <div class="detail-label">First Name</div>
+                                <div class="detail-value editable">
+                                    <span id="firstName">Loading...</span>
+                                    <button class="edit-btn" data-field="firstName">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <div class="election-info">
-                                <div class="election-title">President Student Council</div>
-                                <div class="election-role">Candidate</div>
-                                <div class="election-date">October 2024</div>
+                            
+                            <div class="detail-group">
+                                <div class="detail-label">Last Name</div>
+                                <div class="detail-value editable">
+                                    <span id="lastName">Loading...</span>
+                                    <button class="edit-btn" data-field="lastName">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
                             </div>
-                            <div class="election-status status-completed">Completed</div>
+                            
+                            <div class="detail-group">
+                                <div class="detail-label">Email</div>
+                                <div class="detail-value editable">
+                                    <span id="email">Loading...</span>
+                                    <button class="edit-btn" data-field="email">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-group">
+                                <div class="detail-label">STEM ID</div>
+                                <div class="detail-value">
+                                    <span id="stemId">Loading...</span>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-group">
+                                <div class="detail-label">Department</div>
+                                <div class="detail-value editable">
+                                    <span id="department">Loading...</span>
+                                    <button class="edit-btn" data-field="department">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="detail-group">
+                                <div class="detail-label">Member Since</div>
+                                <div class="detail-value">
+                                    <span id="memberSince">Loading...</span>
+                                </div>
+                            </div>
                         </div>
                         
-                        <div class="participation-item">
-                            <div class="election-icon">
-                                <i class="fas fa-users"></i>
+                        <div class="detail-group">
+                            <div class="detail-label">Bio</div>
+                            <div class="detail-value editable">
+                                <span id="bio">Loading...</span>
+                                <button class="edit-btn" data-field="bio">
+                                    <i class="fas fa-edit"></i>
+                                </button>
                             </div>
-                            <div class="election-info">
-                                <div class="election-title">Department Representative</div>
-                                <div class="election-role">Current Role</div>
-                                <div class="election-date">November 2023 - Present</div>
-                            </div>
-                            <div class="election-status status-active">Active</div>
-                        </div>
-                        
-                        <div class="participation-item">
-                            <div class="election-icon">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                            <div class="election-info">
-                                <div class="election-title">Treasurer Election</div>
-                                <div class="election-role">Voter</div>
-                                <div class="election-date">September 2023</div>
-                            </div>
-                            <div class="election-status status-completed">Completed</div>
                         </div>
                     </div>
                 </div>
@@ -969,220 +964,409 @@
             </div>
         </div>
     </div>
-      <script type="module" src="firebase.js"></script>
-    <script>
-        // User Profile Data Management
-        const UserProfile = {
-            // Initialize user profile data
-            init: function() {
-                // Load profile data from localStorage or use defaults
-                const savedProfile = localStorage.getItem('stemUserProfile');
-                if (savedProfile) {
-                    this.data = JSON.parse(savedProfile);
-                } else {
-                    // Default profile data
-                    this.data = {
-                        firstName: 'Juan',
-                        lastName: 'User',
-                        email: 'juan.delacruz@stem.edu',
-                        stemId: 'STEM-2024-00123',
-                        department: 'Computer Science',
-                        memberSince: 'January 2023',
-                        bio: 'Passionate about technology and community development. Currently serving as the Computer Science Department Representative.',
-                        profileImage: 'https://ui-avatars.com/api/?name=Juan+Dela+Cruz&background=2563eb&color=fff&size=150',
-                        role: 'STEM Member'
-                    };
-                    this.save();
-                }
-                
-                // Apply profile data to UI
-                this.applyToUI();
-            },
-            
-            // Save profile data to localStorage
-            save: function() {
-                localStorage.setItem('stemUserProfile', JSON.stringify(this.data));
-                
-                // Also update the user data in localStorage for other pages
-                const userData = {
-                    firstName: this.data.firstName,
-                    lastName: this.data.lastName,
-                    email: this.data.email,
-                    department: this.data.department,
-                    profileImage: this.data.profileImage,
-                    // Add a timestamp to force refresh on other pages
-                    lastUpdated: new Date().getTime()
-                };
-                localStorage.setItem('stemUserData', JSON.stringify(userData));
-                
-                // Dispatch a custom event to notify other pages/tabs
-                window.dispatchEvent(new CustomEvent('userProfileUpdated', {
-                    detail: userData
-                }));
-            },
-            
-            // Apply profile data to UI elements
-            applyToUI: function() {
-                // Update all profile fields
-                document.getElementById('firstName').textContent = this.data.firstName;
-                document.getElementById('lastName').textContent = this.data.lastName;
-                document.getElementById('email').textContent = this.data.email;
-                document.getElementById('stemId').textContent = this.data.stemId;
-                document.getElementById('department').textContent = this.data.department;
-                document.getElementById('memberSince').textContent = this.data.memberSince;
-                document.getElementById('bio').textContent = this.data.bio;
-                
-                // Update profile image
-                document.getElementById('profileImage').src = this.data.profileImage;
-                
-                // Update profile card elements
-                document.getElementById('profileName').textContent = `${this.data.firstName} ${this.data.lastName}`;
-                document.getElementById('profileDepartment').textContent = `${this.data.department} Department`;
-                document.getElementById('profileRole').textContent = this.data.role;
-                
-                // Update user avatar in header
-                this.updateUserAvatar();
-            },
-            
-            // Update user avatar in header
-            updateUserAvatar: function() {
-                const userAvatar = document.getElementById('userAvatar');
-                userAvatar.innerHTML = '';
-                
-                if (this.data.profileImage && this.data.profileImage !== 'https://ui-avatars.com/api/?name=Juan+Dela+Cruz&background=2563eb&color=fff&size=150') {
-                    // Use profile image
-                    const img = document.createElement('img');
-                    img.src = this.data.profileImage;
-                    img.alt = `${this.data.firstName} ${this.data.lastName}`;
-                    img.style.width = '100%';
-                    img.style.height = '100%';
-                    img.style.borderRadius = '50%';
-                    img.style.objectFit = 'cover';
-                    userAvatar.appendChild(img);
-                } else {
-                    // Use initials
-                    const initials = this.data.firstName.charAt(0) + this.data.lastName.charAt(0);
-                    userAvatar.textContent = initials;
-                }
-            },
-            
-            // Update a specific field
-            updateField: function(field, value) {
-                this.data[field] = value;
-                this.save();
-                this.applyToUI(); // Re-apply all UI updates
-            },
-            
-            // Update profile image
-            updateProfileImage: function(imageUrl) {
-                this.data.profileImage = imageUrl;
-                this.save();
-                this.applyToUI();
-                
-                // Force update dashboard if it's open in another tab
-                localStorage.setItem('forceProfileImageUpdate', new Date().getTime());
-            }
-        };
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize user profile
-            UserProfile.init();
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // ==================== FIREBASE CONFIGURATION ====================
+        // REPLACE THESE WITH YOUR ACTUAL FIREBASE CONFIG VALUES
+        const firebaseConfig = {
+  apiKey: "AIzaSyDjccACQ4aGNIIE2GhvkM9vR5RW08IbsJ8",
+  authDomain: "e-voting-system-db6c0.firebaseapp.com",
+  projectId: "e-voting-system-db6c0",
+  storageBucket: "e-voting-system-db6c0.firebasestorage.app",
+  messagingSenderId: "710903523364",
+  appId: "1:710903523364:web:af7b22979230075e1d50b1"
+};
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        
+        console.log("Firebase initialized for profile page");
+
+        // ==================== DOM ELEMENTS ====================
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const profileContent = document.getElementById('profileContent');
+        const userAvatar = document.getElementById('userAvatar');
+        const avatarSpinner = document.getElementById('avatarSpinner');
+        const profileImage = document.getElementById('profileImage');
+        const profileName = document.getElementById('profileName');
+        const profileRole = document.getElementById('profileRole');
+        const profileDepartment = document.getElementById('profileDepartment');
+        const firstName = document.getElementById('firstName');
+        const lastName = document.getElementById('lastName');
+        const email = document.getElementById('email');
+        const stemId = document.getElementById('stemId');
+        const department = document.getElementById('department');
+        const memberSince = document.getElementById('memberSince');
+        const bio = document.getElementById('bio');
+        const electionsCount = document.getElementById('electionsCount');
+        const votesCount = document.getElementById('votesCount');
+        const rolesCount = document.getElementById('rolesCount');
+        const electionParticipationList = document.getElementById('electionParticipationList');
+
+        // ==================== UTILITY FUNCTIONS ====================
+        
+        // Safely get user initials
+        function getUserInitials(fullName) {
+            if (!fullName || typeof fullName !== 'string') {
+                return "U";
+            }
             
+            try {
+                const names = fullName.trim().split(' ');
+                if (names.length === 0) return "U";
+                
+                const firstInitial = names[0] ? names[0].charAt(0).toUpperCase() : "";
+                const lastInitial = names.length > 1 ? names[names.length - 1].charAt(0).toUpperCase() : "";
+                
+                return firstInitial + lastInitial || firstInitial || "U";
+            } catch (error) {
+                console.warn("Error getting initials:", error);
+                return "U";
+            }
+        }
+
+        // Format Firestore timestamp
+        function formatTimestamp(timestamp) {
+            if (!timestamp) return "Not available";
+            
+            try {
+                let date;
+                if (timestamp.toDate) {
+                    date = timestamp.toDate();
+                } else if (timestamp instanceof Date) {
+                    date = timestamp;
+                } else {
+                    date = new Date(timestamp);
+                }
+                
+                if (isNaN(date.getTime())) return "Invalid date";
+                
+                return date.toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                });
+            } catch (error) {
+                console.warn("Error formatting timestamp:", error);
+                return "Date error";
+            }
+        }
+
+        // Generate profile image URL from name
+        function generateAvatarUrl(fullName) {
+            const initials = getUserInitials(fullName);
+            return `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=4F7C82&color=fff&size=150`;
+        }
+
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            toastMessage.textContent = message;
+            toast.className = 'toast ' + type;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // ==================== DATA LOADING FUNCTIONS ====================
+        
+        async function loadUserProfile(user) {
+            try {
+                console.log("Loading profile for user:", user.uid);
+                
+                // Get user document from Firestore
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    console.log("User data loaded:", userData);
+                    updateProfileUI(user, userData);
+                } else {
+                    console.log("No user document found, creating one...");
+                    
+                    // Parse name from email or use default
+                    const emailName = user.email.split('@')[0];
+                    const names = emailName.split('.');
+                    const firstNameFromEmail = names[0] || "User";
+                    const lastNameFromEmail = names.length > 1 ? names[names.length - 1] : "";
+                    
+                    // Create default user data
+                    const defaultUserData = {
+                        firstName: firstNameFromEmail,
+                        lastName: lastNameFromEmail,
+                        email: user.email,
+                        fullName: `${firstNameFromEmail} ${lastNameFromEmail}`.trim(),
+                        stemId: "STEM-" + new Date().getFullYear() + "-" + Math.floor(10000 + Math.random() * 90000),
+                        role: "student",
+                        department: "STEM Department",
+                        bio: "Welcome to the STEM Election System! Update your bio to tell others about yourself.",
+                        memberSince: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+                    
+                    // Save to Firestore
+                    await db.collection('users').doc(user.uid).set(defaultUserData);
+                    console.log("Default user data saved");
+                    
+                    // Load stats
+                    await loadUserStats(user.uid);
+                    
+                    // Update UI with default data
+                    updateProfileUI(user, defaultUserData);
+                }
+                
+                // Hide loading, show content
+                loadingSpinner.classList.add('hidden');
+                profileContent.classList.remove('hidden');
+                
+            } catch (error) {
+                console.error("Error loading user profile:", error);
+                showToast("Error loading profile data", "error");
+                
+                // Still show basic info
+                const fallbackData = {
+                    firstName: user.displayName?.split(' ')[0] || "User",
+                    lastName: user.displayName?.split(' ').slice(1).join(' ') || "",
+                    email: user.email,
+                    fullName: user.displayName || user.email,
+                    stemId: "Not available",
+                    role: "student",
+                    department: "STEM Department",
+                    bio: "Error loading profile data."
+                };
+                
+                updateProfileUI(user, fallbackData);
+                loadingSpinner.classList.add('hidden');
+                profileContent.classList.remove('hidden');
+            }
+        }
+
+        async function loadUserStats(userId) {
+            try {
+                // Load user stats from Firestore
+                // Note: You'll need to create these collections in your Firestore
+                const electionsSnapshot = await db.collection('elections')
+                    .where('participants', 'array-contains', userId)
+                    .get();
+                
+                const votesSnapshot = await db.collection('votes')
+                    .where('voterId', '==', userId)
+                    .get();
+                
+                // Update stats
+                electionsCount.textContent = electionsSnapshot.size;
+                votesCount.textContent = votesSnapshot.size;
+                
+                // Load election participation
+                await loadElectionParticipation(electionsSnapshot);
+                
+            } catch (error) {
+                console.warn("Error loading stats:", error);
+                // Use default values
+                electionsCount.textContent = "0";
+                votesCount.textContent = "0";
+            }
+        }
+
+        async function loadElectionParticipation(electionsSnapshot) {
+            try {
+                electionParticipationList.innerHTML = '';
+                
+                if (electionsSnapshot.empty) {
+                    electionParticipationList.innerHTML = `
+                        <div class="participation-item">
+                            <div class="election-info">
+                                <div class="election-title">No Election Participation</div>
+                                <div class="election-date">You haven't participated in any elections yet.</div>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Get today's date for status calculation
+                const today = new Date();
+                
+                electionsSnapshot.forEach(doc => {
+                    const election = doc.data();
+                    const electionDate = election.date?.toDate ? election.date.toDate() : new Date(election.date);
+                    const isCompleted = electionDate < today;
+                    
+                    const participationItem = document.createElement('div');
+                    participationItem.className = 'participation-item';
+                    
+                    participationItem.innerHTML = `
+                        <div class="election-icon">
+                            <i class="fas fa-vote-yea"></i>
+                        </div>
+                        <div class="election-info">
+                            <div class="election-title">${election.title || "Election"}</div>
+                            <div class="election-role">${election.role || "Participant"}</div>
+                            <div class="election-date">${formatTimestamp(election.date)}</div>
+                        </div>
+                        <div class="election-status ${isCompleted ? 'status-completed' : 'status-active'}">
+                            ${isCompleted ? 'Completed' : 'Active'}
+                        </div>
+                    `;
+                    
+                    electionParticipationList.appendChild(participationItem);
+                });
+                
+            } catch (error) {
+                console.error("Error loading election participation:", error);
+                electionParticipationList.innerHTML = `
+                    <div class="participation-item">
+                        <div class="election-info">
+                            <div class="election-title">Error Loading Participation</div>
+                            <div class="election-date">Could not load election data.</div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // ==================== UI UPDATE FUNCTION ====================
+        
+        function updateProfileUI(user, userData) {
+            try {
+                console.log("Updating UI with user data:", userData);
+                
+                // Extract first and last name from fullName if they don't exist separately
+                let firstNameValue = userData.firstName;
+                let lastNameValue = userData.lastName;
+                let fullNameValue = userData.fullName;
+                
+                if (!firstNameValue && fullNameValue) {
+                    const names = fullNameValue.split(' ');
+                    firstNameValue = names[0] || "";
+                    lastNameValue = names.slice(1).join(' ') || "";
+                } else if (!fullNameValue && firstNameValue) {
+                    fullNameValue = `${firstNameValue} ${lastNameValue || ""}`.trim();
+                }
+                
+                // Update all fields
+                firstName.textContent = firstNameValue || "Not set";
+                lastName.textContent = lastNameValue || "Not set";
+                email.textContent = userData.email || user.email;
+                stemId.textContent = userData.stemId || "Not assigned";
+                department.textContent = userData.department || "STEM Department";
+                memberSince.textContent = formatTimestamp(userData.memberSince || user.metadata?.creationTime);
+                bio.textContent = userData.bio || "No bio provided.";
+                
+                // Update profile card
+                profileName.textContent = fullNameValue || "User";
+                profileRole.textContent = (userData.role || "student").charAt(0).toUpperCase() + (userData.role || "student").slice(1);
+                profileDepartment.textContent = `${userData.department || "STEM"} Department`;
+                
+                // Update avatars
+                updateAvatars(fullNameValue || "User", userData.profileImage);
+                
+                // Update role count
+                rolesCount.textContent = "1"; // Default to 1 role
+                
+            } catch (error) {
+                console.error("Error updating UI:", error);
+                showToast("Error updating profile display", "error");
+            }
+        }
+
+        function updateAvatars(fullName, profileImageUrl) {
+            // Update main profile image
+            if (profileImageUrl) {
+                profileImage.src = profileImageUrl;
+            } else {
+                profileImage.src = generateAvatarUrl(fullName);
+            }
+            
+            // Update header avatar
+            const initials = getUserInitials(fullName);
+            userAvatar.innerHTML = initials;
+            userAvatar.title = fullName;
+        }
+
+        // ==================== EVENT HANDLERS ====================
+        
+        async function saveProfileField(field, value) {
+            try {
+                const user = auth.currentUser;
+                if (!user) return false;
+                
+                await db.collection('users').doc(user.uid).update({
+                    [field]: value,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                return true;
+            } catch (error) {
+                console.error("Error saving profile field:", error);
+                return false;
+            }
+        }
+
+        // ==================== INITIALIZATION ====================
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Mobile sidebar toggle
             const mobileToggle = document.getElementById('mobileToggle');
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('overlay');
-            const navItems = document.querySelectorAll('.nav-item');
-            const logoutBtn = document.getElementById('logout-btn');
-            const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toast-message');
-
-            // Mobile sidebar toggle
+            
             function toggleSidebar() {
                 sidebar.classList.toggle('mobile-open');
                 overlay.classList.toggle('active');
             }
-
+            
             mobileToggle.addEventListener('click', toggleSidebar);
             overlay.addEventListener('click', toggleSidebar);
-
+            
             // Close sidebar when clicking on nav items on mobile
-            navItems.forEach(item => {
+            document.querySelectorAll('.nav-item').forEach(item => {
                 item.addEventListener('click', function() {
                     if (window.innerWidth <= 768) {
                         toggleSidebar();
                     }
-                    
-                    if (this.id !== 'logout-btn') {
-                        navItems.forEach(i => i.classList.remove('active'));
-                        this.classList.add('active');
-                    }
                 });
             });
-
-            // Logout functionality - FIXED: Now redirects to home page
-            logoutBtn.addEventListener('click', function() {
+            
+            // Logout functionality
+            document.getElementById('logout-btn').addEventListener('click', async function() {
                 if (confirm('Are you sure you want to log out?')) {
-                    console.log('User logged out');
-                    // Clear login status
-                    localStorage.removeItem('isLoggedIn');
-                    // Redirect to home page
-                    window.location.href = 'index.html';
-                }
-            });
-
-            // Close sidebar when window is resized to desktop size
-            window.addEventListener('resize', function() {
-                if (window.innerWidth > 768) {
-                    sidebar.classList.remove('mobile-open');
-                    overlay.classList.remove('active');
-                }
-            });
-
-            // Profile functionality
-            const imageUploadBtn = document.getElementById('imageUploadBtn');
-            const imageUpload = document.getElementById('imageUpload');
-            const profileImage = document.getElementById('profileImage');
-            const editProfileBtn = document.getElementById('editProfileBtn');
-            const changePasswordBtn = document.getElementById('changePasswordBtn');
-            const passwordModal = document.getElementById('passwordModal');
-            const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
-            const savePasswordBtn = document.getElementById('savePasswordBtn');
-            const editButtons = document.querySelectorAll('.edit-btn');
-
-            // Image Upload
-            imageUploadBtn.addEventListener('click', function() {
-                imageUpload.click();
-            });
-
-            imageUpload.addEventListener('change', function(e) {
-                if (e.target.files && e.target.files[0]) {
-                    const reader = new FileReader();
-                    
-                    reader.onload = function(e) {
-                        // Update profile image in the data model
-                        UserProfile.updateProfileImage(e.target.result);
-                        showToast('Profile image updated successfully!');
+                    try {
+                        await auth.signOut();
+                        window.location.href = 'login.html';
+                    } catch (error) {
+                        console.error("Logout error:", error);
+                        showToast("Error logging out", "error");
                     }
-                    
-                    reader.readAsDataURL(e.target.files[0]);
                 }
             });
-
-            // Edit Profile Mode - FIXED: STEM ID is now not editable
+            
+            // Edit profile functionality
+            const editProfileBtn = document.getElementById('editProfileBtn');
+            const editButtons = document.querySelectorAll('.edit-btn');
+            
+            let isEditing = false;
+            
             editProfileBtn.addEventListener('click', function() {
-                const isEditing = editProfileBtn.classList.contains('editing');
+                isEditing = !isEditing;
                 
-                if (!isEditing) {
+                if (isEditing) {
                     // Enter edit mode
                     editProfileBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
-                    editProfileBtn.classList.add('editing');
                     
-                    // Make all fields editable except STEM ID
+                    // Make fields editable
                     editButtons.forEach(btn => {
                         const field = btn.getAttribute('data-field');
-                        // Skip STEM ID field - it should not be editable
-                        if (field === 'stemId') return;
-                        
                         const valueElement = document.getElementById(field);
                         const currentValue = valueElement.textContent;
                         
@@ -1193,49 +1377,100 @@
                         }
                         
                         btn.innerHTML = '<i class="fas fa-check"></i>';
-                        btn.classList.add('save-btn');
+                        btn.classList.add('save-mode');
                     });
                 } else {
                     // Save changes
                     editProfileBtn.innerHTML = '<i class="fas fa-edit"></i> Edit Profile';
-                    editProfileBtn.classList.remove('editing');
                     
-                    // Save all field values except STEM ID
+                    // Save all fields
+                    const savePromises = [];
+                    
                     editButtons.forEach(btn => {
                         const field = btn.getAttribute('data-field');
-                        // Skip STEM ID field - it should not be editable
-                        if (field === 'stemId') return;
-                        
                         const valueElement = document.getElementById(field);
                         const input = valueElement.querySelector('input, textarea');
                         const newValue = input.value;
                         
-                        // Update the field in the data model
-                        UserProfile.updateField(field, newValue);
-                        
+                        // Update UI immediately
                         valueElement.innerHTML = `<span>${newValue}</span>`;
                         btn.innerHTML = '<i class="fas fa-edit"></i>';
-                        btn.classList.remove('save-btn');
+                        btn.classList.remove('save-mode');
+                        
+                        // Save to Firebase
+                        savePromises.push(saveProfileField(field, newValue));
                     });
                     
-                    showToast('Profile updated successfully!');
+                    // Wait for all saves to complete
+                    Promise.all(savePromises).then(results => {
+                        if (results.every(r => r)) {
+                            showToast('Profile updated successfully!');
+                            // Reload profile data
+                            const user = auth.currentUser;
+                            if (user) loadUserProfile(user);
+                        } else {
+                            showToast('Some fields could not be saved', 'error');
+                        }
+                    });
                 }
             });
-
-            // Change Password Modal
-            changePasswordBtn.addEventListener('click', function() {
+            
+            // Individual field editing
+            editButtons.forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    const field = this.getAttribute('data-field');
+                    const valueElement = document.getElementById(field);
+                    
+                    if (this.classList.contains('save-mode')) {
+                        // Save this field
+                        const input = valueElement.querySelector('input, textarea');
+                        const newValue = input.value;
+                        
+                        const saved = await saveProfileField(field, newValue);
+                        if (saved) {
+                            valueElement.innerHTML = `<span>${newValue}</span>`;
+                            this.innerHTML = '<i class="fas fa-edit"></i>';
+                            this.classList.remove('save-mode');
+                            showToast(`${field.replace(/([A-Z])/g, ' $1')} updated successfully!`);
+                        } else {
+                            showToast(`Error saving ${field}`, 'error');
+                        }
+                    } else {
+                        // Enter edit mode for this field
+                        const currentValue = valueElement.textContent;
+                        
+                        if (field === 'bio') {
+                            valueElement.innerHTML = `<textarea class="input-field" style="height: 80px;">${currentValue}</textarea>`;
+                        } else {
+                            valueElement.innerHTML = `<input type="text" class="input-field" value="${currentValue}">`;
+                        }
+                        
+                        this.innerHTML = '<i class="fas fa-check"></i>';
+                        this.classList.add('save-mode');
+                    }
+                });
+            });
+            
+            
+            // Password modal
+            const changePasswordBtn = document.getElementById('changePasswordBtn');
+            const passwordModal = document.getElementById('passwordModal');
+            const cancelPasswordBtn = document.getElementById('cancelPasswordBtn');
+            const savePasswordBtn = document.getElementById('savePasswordBtn');
+            
+            changePasswordBtn.addEventListener('click', () => {
                 passwordModal.style.display = 'flex';
             });
-
-            cancelPasswordBtn.addEventListener('click', function() {
+            
+            cancelPasswordBtn.addEventListener('click', () => {
                 passwordModal.style.display = 'none';
-                // Clear password fields
+                // Clear fields
                 document.getElementById('currentPassword').value = '';
                 document.getElementById('newPassword').value = '';
                 document.getElementById('confirmPassword').value = '';
             });
-
-            savePasswordBtn.addEventListener('click', function() {
+            
+            savePasswordBtn.addEventListener('click', async () => {
                 const currentPassword = document.getElementById('currentPassword').value;
                 const newPassword = document.getElementById('newPassword').value;
                 const confirmPassword = document.getElementById('confirmPassword').value;
@@ -1255,74 +1490,44 @@
                     return;
                 }
                 
-                // In a real app, you would send this to your backend
-                console.log('Password change requested');
-                showToast('Password changed successfully!');
-                passwordModal.style.display = 'none';
-                
-                // Clear password fields
-                document.getElementById('currentPassword').value = '';
-                document.getElementById('newPassword').value = '';
-                document.getElementById('confirmPassword').value = '';
-            });
-
-            // Individual field editing - FIXED: STEM ID is now not editable
-            editButtons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const field = btn.getAttribute('data-field');
+                try {
+                    // Reauthenticate user
+                    const user = auth.currentUser;
+                    const credential = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
+                    await user.reauthenticateWithCredential(credential);
                     
-                    // Skip STEM ID field - it should not be editable
-                    if (field === 'stemId') return;
+                    // Update password
+                    await user.updatePassword(newPassword);
                     
-                    if (btn.classList.contains('save-btn')) {
-                        // Already in edit mode, save this field
-                        const valueElement = document.getElementById(field);
-                        const input = valueElement.querySelector('input, textarea');
-                        const newValue = input.value;
-                        
-                        // Update the field in the data model
-                        UserProfile.updateField(field, newValue);
-                        
-                        valueElement.innerHTML = `<span>${newValue}</span>`;
-                        btn.innerHTML = '<i class="fas fa-edit"></i>';
-                        btn.classList.remove('save-btn');
-                        
-                        showToast(`${field.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())} updated successfully!`);
-                    } else {
-                        // Enter edit mode for this field
-                        const valueElement = document.getElementById(field);
-                        const currentValue = valueElement.textContent;
-                        
-                        if (field === 'bio') {
-                            valueElement.innerHTML = `<textarea class="input-field" style="height: 80px;">${currentValue}</textarea>`;
-                        } else {
-                            valueElement.innerHTML = `<input type="text" class="input-field" value="${currentValue}">`;
-                        }
-                        
-                        btn.innerHTML = '<i class="fas fa-check"></i>';
-                        btn.classList.add('save-btn');
-                    }
-                });
-            });
-
-            // Toast notification function
-            function showToast(message, type = 'success') {
-                toastMessage.textContent = message;
-                toast.className = 'toast ' + type;
-                toast.classList.add('show');
-                
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 3000);
-            }
-            
-            // Listen for profile updates from other tabs/pages
-            window.addEventListener('storage', (e) => {
-                if (e.key === 'stemUserData' || e.key === 'forceProfileImageUpdate') {
-                    UserProfile.init();
+                    passwordModal.style.display = 'none';
+                    document.getElementById('currentPassword').value = '';
+                    document.getElementById('newPassword').value = '';
+                    document.getElementById('confirmPassword').value = '';
+                    
+                    showToast('Password changed successfully!');
+                    
+                } catch (error) {
+                    console.error("Password change error:", error);
+                    alert('Error changing password: ' + error.message);
                 }
             });
         });
+
+        // ==================== AUTHENTICATION LISTENER ====================
+        
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                console.log("User authenticated:", user.email);
+                loadUserProfile(user);
+            } else {
+                console.log("No user signed in, redirecting to login");
+                window.location.href = 'login.html';
+            }
+        }, (error) => {
+            console.error("Auth state error:", error);
+            showToast("Authentication error", "error");
+        });
+
     </script>
 </body>
 </html>

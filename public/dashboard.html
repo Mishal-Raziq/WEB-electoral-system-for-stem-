@@ -9,24 +9,35 @@
     <style>
         /* ===== PROFESSIONAL ELECTION DASHBOARD STYLES ===== */
         :root {
-            --primary-blue: #2563eb;
-            --primary-dark: #1d4ed8;
-            --secondary-blue: #3498db;
-            --accent-purple: #7c3aed;
+            /* Core Brand Colors */
+            --primary-blue: #4F7C82;
+            --primary-dark: #027687;
+            --secondary-blue: #008480;
+            --accent-purple: #B8E3E9;
+
+            /* Neutrals */
             --dark-blue: #1e293b;
-            --light-blue: #ebf5fb;
-            --success-green: #10b981;
-            --warning-orange: #f59e0b;
-            --danger-red: #ef4444;
+            --light-blue: #f8fafc;
             --gray-light: #f8fafc;
             --gray-medium: #e9ecef;
             --gray-dark: #64748b;
             --text-dark: #1e293b;
             --white: #ffffff;
+
+            /* Status Colors */
+            --success-green: #10b981;
+            --warning-orange: #f59e0b;
+            --danger-red: #ef4444;
+            --info-blue: #3b82f6;
+
+            /* Sidebar */
             --sidebar-bg: #1e293b;
             --sidebar-link: #cbd5e1;
-            --active-link-bg: #2563eb;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --active-link-bg: #4F7C82;
+
+            /* Effects */
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                    0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.15);
             --radius: 8px;
             --transition: all 0.3s ease;
@@ -365,7 +376,6 @@
             font-weight: 500;
             padding: 6px 12px;
             border-radius: 20px;
-            background: rgba(16, 185, 129, 0.1);
         }
 
         .trend.up {
@@ -389,36 +399,20 @@
         }
 
         /* Specific card color variations */
-        .stat-card:nth-child(1) {
-            border-top-color: var(--primary-blue);
-        }
-
         .stat-card:nth-child(1) .stat-icon-container {
             background: linear-gradient(135deg, var(--primary-blue), #3b82f6);
-        }
-
-        .stat-card:nth-child(2) {
-            border-top-color: var(--success-green);
         }
 
         .stat-card:nth-child(2) .stat-icon-container {
             background: linear-gradient(135deg, var(--success-green), #34d399);
         }
 
-        .stat-card:nth-child(3) {
-            border-top-color: var(--warning-orange);
-        }
-
         .stat-card:nth-child(3) .stat-icon-container {
             background: linear-gradient(135deg, var(--warning-orange), #f59e0b);
         }
 
-        .stat-card:nth-child(4) {
-            border-top-color: var(--danger-red);
-        }
-
         .stat-card:nth-child(4) .stat-icon-container {
-            background: linear-gradient(135deg, var(--danger-red), #f87171);
+            background: linear-gradient(135deg, var(--info-blue), #60a5fa);
         }
 
         /* ===== DASHBOARD LAYOUT ===== */
@@ -527,64 +521,10 @@
             background: var(--primary-dark);
         }
 
-        /* Calendar */
-        .calendar-nav {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-
-        .calendar-period {
-            font-weight: 600;
-            color: var(--dark-blue);
-        }
-
-        .calendar-days {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .calendar-day {
-            text-align: center;
-            padding: 8px;
-            border-radius: 6px;
-            background: var(--gray-light);
-            font-weight: 500;
-        }
-
-        .calendar-day.active {
-            background: var(--primary-blue);
-            color: white;
-        }
-
-        .calendar-times {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        .calendar-time {
-            text-align: center;
-            padding: 5px;
-            font-size: 0.8em;
-            color: var(--gray-dark);
-        }
-
-        .calendar-event {
-            background: var(--light-blue);
-            padding: 10px;
-            border-radius: 6px;
-            margin-top: 10px;
-            border-left: 3px solid var(--primary-blue);
-        }
-
-        .calendar-event p {
-            font-size: 0.9em;
-            font-weight: 500;
-            color: var(--dark-blue);
+        .vote-btn.disabled {
+            background: var(--gray-dark);
+            cursor: not-allowed;
+            opacity: 0.7;
         }
 
         /* Live Results */
@@ -621,7 +561,7 @@
             border-radius: 4px;
         }
 
-        /* Voting Process */
+        /* Voting Stats */
         .voting-stats {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -730,6 +670,51 @@
             color: var(--gray-dark);
         }
 
+        /* ===== LOADING STATES ===== */
+        .loading {
+            opacity: 0.7;
+        }
+
+        .loading::after {
+            content: "...";
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0%, 100% { content: "."; }
+            33% { content: ".."; }
+            66% { content: "..."; }
+        }
+
+        /* ===== NOTIFICATION ===== */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-hover);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 2000;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left: 4px solid var(--success-green);
+        }
+
+        .notification.error {
+            border-left: 4px solid var(--danger-red);
+        }
+
         /* ===== RESPONSIVE DESIGN ===== */
         @media (max-width: 1200px) {
             .dashboard-layout {
@@ -783,10 +768,6 @@
             .main-content {
                 padding: 70px 15px 15px;
             }
-            
-            .calendar-days, .calendar-times {
-                grid-template-columns: repeat(2, 1fr);
-            }
         }
     </style>
 </head>
@@ -798,6 +779,12 @@
 
     <!-- Overlay for mobile -->
     <div class="overlay" id="overlay"></div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span class="material-icons" id="notificationIcon">info</span>
+        <span id="notificationMessage"></span>
+    </div>
 
     <div class="app-container">
         <!-- Sidebar Navigation -->
@@ -817,10 +804,6 @@
                         <span class="material-icons">space_dashboard</span>
                         Dashboard
                     </a>
-                    <a href="nominate.html" class="nav-item">
-                        <span class="material-icons">campaign</span>
-                        Campaign
-                    </a>
                     <a href="vote.html" class="nav-item">
                         <span class="material-icons">how_to_vote</span>
                         Voting
@@ -836,10 +819,6 @@
                     <a href="profile.html" class="nav-item">
                         <span class="material-icons">person</span>
                         Profile
-                    </a>
-                    <a href="settings.html" class="nav-item">
-                        <span class="material-icons">settings</span>
-                        Settings
                     </a>
                 </div>
             </ul>
@@ -857,13 +836,12 @@
             <div class="dashboard-header">
                 <div class="welcome-section">
                     <div class="welcome-text">
-                        <h1 id="welcomeTitle">Hello, Alex!</h1>
+                        <h1 id="welcomeTitle">Loading...</h1>
                         <p>Welcome to STEM's Online Voting System</p>
                     </div>
                     <div class="user-info">
-                        <div class="user-avatar" id="userAvatar">AJ</div>
+                        <div class="user-avatar" id="userAvatar">U</div>
                     </div>
-                    
                 </div>
             </div>
 
@@ -871,72 +849,72 @@
             <div class="stats-container">
                 <div class="stat-card">
                     <div class="stat-card-header">
-                        <h3>Total Users</h3>
-                        <div class="stat-icon-container">
-                            <span class="material-icons">groups</span>
-                        </div>
-                    </div>
-                    <div class="stat-card-content">
-                        <div class="stat-number">1,247</div>
-                        <div class="stat-trend">
-                            <div class="trend up">
-                                <span class="material-icons">trending_up</span> 12%
-                            </div>
-                            <div class="trend-value">vs last week</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <h3>Active Candidates</h3>
-                        <div class="stat-icon-container">
-                            <span class="material-icons">person</span>
-                        </div>
-                    </div>
-                    <div class="stat-card-content">
-                        <div class="stat-number">8</div>
-                        <div class="stat-trend">
-                            <div class="trend up">
-                                <span class="material-icons">trending_up</span> 9%
-                            </div>
-                            <div class="trend-value">vs last week</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-card-header">
-                        <h3>Votes Cast</h3>
+                        <h3>Total Elections</h3>
                         <div class="stat-icon-container">
                             <span class="material-icons">how_to_vote</span>
                         </div>
                     </div>
                     <div class="stat-card-content">
-                        <div class="stat-number">892</div>
+                        <div class="stat-number" id="totalElections">0</div>
                         <div class="stat-trend">
-                            <div class="trend up">
-                                <span class="material-icons">trending_up</span> 24%
+                            <div class="trend up" id="electionsTrend">
+                                <span class="material-icons">trending_up</span> <span id="electionsChange">0%</span>
                             </div>
-                            <div class="trend-value">vs last week</div>
+                            <div class="trend-value">Current period</div>
                         </div>
                     </div>
                 </div>
 
                 <div class="stat-card">
                     <div class="stat-card-header">
-                        <h3>Pending Approvals</h3>
+                        <h3>Active Elections</h3>
                         <div class="stat-icon-container">
-                            <span class="material-icons">pending_actions</span>
+                            <span class="material-icons">event_available</span>
                         </div>
                     </div>
                     <div class="stat-card-content">
-                        <div class="stat-number">3</div>
+                        <div class="stat-number" id="activeElections">0</div>
                         <div class="stat-trend">
-                            <div class="trend down">
-                                <span class="material-icons">warning</span> Attention
+                            <div id="activeElectionsStatus" class="trend up">
+                                <span class="material-icons">check_circle</span> Available
                             </div>
-                            <div class="trend-value">requires action</div>
+                            <div class="trend-value">For voting</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <h3>Your Votes</h3>
+                        <div class="stat-icon-container">
+                            <span class="material-icons">person</span>
+                        </div>
+                    </div>
+                    <div class="stat-card-content">
+                        <div class="stat-number" id="userVotes">0</div>
+                        <div class="stat-trend">
+                            <div id="votingStatus" class="trend up">
+                                <span class="material-icons">done</span> Participated
+                            </div>
+                            <div class="trend-value">Your participation</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-card-header">
+                        <h3>Voter Turnout</h3>
+                        <div class="stat-icon-container">
+                            <span class="material-icons">poll</span>
+                        </div>
+                    </div>
+                    <div class="stat-card-content">
+                        <div class="stat-number" id="voterTurnout">0%</div>
+                        <div class="stat-trend">
+                            <div id="turnoutTrend" class="trend up">
+                                <span class="material-icons">trending_up</span> <span id="turnoutChange">0%</span>
+                            </div>
+                            <div class="trend-value">Overall participation</div>
                         </div>
                     </div>
                 </div>
@@ -953,292 +931,547 @@
                                 <span class="material-icons">event_available</span>
                                 Ongoing Elections
                             </h3>
-                            <a href="#" class="view-all">
-                                View All <span class="material-icons">chevron_right</span>
-                            </a>
                         </div>
-                        <div class="election-item">
-                            <div class="election-info">
-                                <h4>President Student Council</h4>
-                                <p>Voting ends in 2 days</p>
+                        <div id="ongoingElectionsList">
+                            <div class="election-item">
+                                <div class="election-info">
+                                    <h4>Loading elections...</h4>
+                                    <p>Please wait</p>
+                                </div>
+                                <button class="vote-btn disabled">
+                                    <span class="material-icons">hourglass_empty</span>
+                                    Loading...
+                                </button>
                             </div>
-                            <button class="vote-btn" onclick="window.location.href='vote.html'">
-                                <span class="material-icons">how_to_vote</span>
-                                Vote Now
-                            </button>
-                        </div>
-                        <div class="election-item">
-                            <div class="election-info">
-                                <h4>Department Representative</h4>
-                                <p>Voting ends in 5 days</p>
-                            </div>
-                            <button class="vote-btn" onclick="window.location.href='vote.html'">
-                                <span class="material-icons">how_to_vote</span>
-                                Vote Now
-                            </button>
                         </div>
                     </div>
 
-                    <!-- Calendar -->
+                    <!-- Upcoming Elections -->
                     <div class="dashboard-card">
                         <div class="card-header">
                             <h3 class="card-title">
-                                <span class="material-icons">calendar_today</span>
-                                Calendar
+                                <span class="material-icons">schedule</span>
+                                Upcoming Elections
                             </h3>
                         </div>
-                        <div class="calendar-nav">
-                            <span class="calendar-period">December 2024</span>
-                        </div>
-                        <div class="calendar-days">
-                            <div class="calendar-day">Today</div>
-                            <div class="calendar-day">Next Week</div>
-                            <div class="calendar-day active">This Month</div>
-                        </div>
-                        <div class="calendar-times">
-                            <div class="calendar-time">7:00</div>
-                            <div class="calendar-time">8:00</div>
-                            <div class="calendar-time">9:00</div>
-                            <div class="calendar-time">10:00</div>
-                        </div>
-                        <div class="calendar-event">
-                            <p>President Student Council Election</p>
+                        <div id="upcomingElectionsList">
+                            <div class="election-item">
+                                <div class="election-info">
+                                    <h4>No upcoming elections</h4>
+                                    <p>Check back later</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Side Column -->
                 <div class="side-column">
-                    <!-- Live Results -->
+                    <!-- Your Voting Activity -->
                     <div class="dashboard-card">
                         <div class="card-header">
                             <h3 class="card-title">
-                                <span class="material-icons">live_tv</span>
-                                Live Results
-                            </h3>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-header">
-                                <span class="result-title">President Student Council</span>
-                                <span class="result-percentage">65%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 65%"></div>
-                            </div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-header">
-                                <span class="result-title">Vice President</span>
-                                <span class="result-percentage">42%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 42%"></div>
-                            </div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-header">
-                                <span class="result-title">Secretary</span>
-                                <span class="result-percentage">78%</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 78%"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Voting Process -->
-                    <div class="dashboard-card">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                <span class="material-icons">poll</span>
-                                Voting Process
+                                <span class="material-icons">history</span>
+                                Your Voting Activity
                             </h3>
                         </div>
                         <div class="voting-stats">
                             <div class="voting-stat">
-                                <div class="voting-number">362</div>
-                                <div class="voting-label">Registered Voters</div>
-                            </div>
-                            <div class="voting-stat">
-                                <div class="voting-number">344</div>
+                                <div class="voting-number" id="votesCast">0</div>
                                 <div class="voting-label">Votes Cast</div>
                             </div>
                             <div class="voting-stat">
-                                <div class="voting-number">8</div>
-                                <div class="voting-label">Candidates</div>
+                                <div class="voting-number" id="pendingVotes">0</div>
+                                <div class="voting-label">Pending</div>
+                            </div>
+                            <div class="voting-stat">
+                                <div class="voting-number" id="availableVotes">0</div>
+                                <div class="voting-label">Available</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Election Activities -->
+                    <!-- Election Summary -->
                     <div class="dashboard-card">
                         <div class="card-header">
                             <h3 class="card-title">
                                 <span class="material-icons">assignment</span>
-                                Election Activities
+                                Election Summary
                             </h3>
                         </div>
                         <div class="activity-stats">
                             <div class="activity-stat ongoing">
-                                <div class="activity-number">2</div>
+                                <div class="activity-number" id="summaryOngoing">0</div>
                                 <div class="activity-label">Ongoing</div>
                             </div>
                             <div class="activity-stat pending">
-                                <div class="activity-number">1</div>
-                                <div class="activity-label">Pending</div>
+                                <div class="activity-number" id="summaryUpcoming">0</div>
+                                <div class="activity-label">Upcoming</div>
                             </div>
                             <div class="activity-stat concluded">
-                                <div class="activity-number">3</div>
+                                <div class="activity-number" id="summaryConcluded">0</div>
                                 <div class="activity-label">Concluded</div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Election Positions -->
+                    <!-- Quick Actions -->
                     <div class="dashboard-card">
                         <div class="card-header">
                             <h3 class="card-title">
-                                <span class="material-icons">business_center</span>
-                                Election Positions
+                                <span class="material-icons">flash_on</span>
+                                Quick Actions
                             </h3>
                         </div>
                         <div class="position-item">
                             <div class="position-info">
-                                <h4>President Student Council</h4>
-                                <div class="position-date">10/21/2024</div>
+                                <h4>Cast Your Vote</h4>
+                                <div class="position-date">Active elections</div>
                             </div>
-                            <div class="position-status status-ongoing">Ongoing</div>
+                            <button class="vote-btn" onclick="window.location.href='vote.html'">
+                                <span class="material-icons">how_to_vote</span>
+                                Vote Now
+                            </button>
                         </div>
                         <div class="position-item">
                             <div class="position-info">
-                                <h4>Vice President</h4>
-                                <div class="position-date">11/05/2024</div>
+                                <h4>View Results</h4>
+                                <div class="position-date">Live updates</div>
                             </div>
-                            <div class="position-status status-pending">Pending</div>
+                            <button class="vote-btn" onclick="window.location.href='results.html'">
+                                <span class="material-icons">bar_chart</span>
+                                See Results
+                            </button>
                         </div>
                         <div class="position-item">
                             <div class="position-info">
-                                <h4>Secretary</h4>
-                                <div class="position-date">09/15/2024</div>
+                                <h4>Update Profile</h4>
+                                <div class="position-date">Personal info</div>
                             </div>
-                            <div class="position-status status-concluded">Concluded</div>
+                            <button class="vote-btn" onclick="window.location.href='profile.html'">
+                                <span class="material-icons">person</span>
+                                Edit Profile
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-         <script type="module" src="firebase.js"></script>
-    <script>
-        // User Data Management for Dashboard
-        const DashboardUser = {
-            init: function() {
-                this.loadUserData();
-                this.setupEventListeners();
-            },
+
+    <script type="module">
+    import { auth, db } from "./js/firebase.js";
+    import {
+        onAuthStateChanged,
+        signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import {
+        collection,
+        getDocs,
+        query,
+        where,
+        doc,
+        getDoc,
+        Timestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    /* ===============================
+       DOM REFERENCES
+    =============================== */
+    const welcomeTitle = document.getElementById("welcomeTitle");
+    const avatarEl = document.getElementById("userAvatar");
+    const mobileToggle = document.getElementById("mobileToggle");
+    const overlay = document.getElementById("overlay");
+    const sidebar = document.getElementById("sidebar");
+    const notification = document.getElementById("notification");
+    const notificationMessage = document.getElementById("notificationMessage");
+    const notificationIcon = document.getElementById("notificationIcon");
+
+    /* ===============================
+       NOTIFICATION FUNCTION
+    =============================== */
+    function showNotification(message, type = 'info') {
+        notificationMessage.textContent = message;
+        notification.className = `notification ${type}`;
+        
+        if (type === 'success') {
+            notificationIcon.textContent = 'check_circle';
+        } else if (type === 'error') {
+            notificationIcon.textContent = 'error';
+        } else {
+            notificationIcon.textContent = 'info';
+        }
+        
+        notification.classList.add('show');
+        
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+
+    /* ===============================
+       MOBILE MENU TOGGLE
+    =============================== */
+    mobileToggle.addEventListener('click', () => {
+        sidebar.classList.add('mobile-open');
+        overlay.classList.add('active');
+    });
+
+    overlay.addEventListener('click', () => {
+        sidebar.classList.remove('mobile-open');
+        overlay.classList.remove('active');
+    });
+
+    /* ===============================
+       FIREBASE DATA FETCHING - FIXED VERSION
+    =============================== */
+
+    // 1. Fetch user data
+    async function fetchUserData(userId) {
+        try {
+            const userRef = doc(db, "users", userId);
+            const userSnap = await getDoc(userRef);
             
-            loadUserData: function() {
-                const userData = JSON.parse(localStorage.getItem('stemUserData') || '{}');
-                
-                if (userData.firstName && userData.lastName) {
-                    // Update welcome message
-                    const welcomeTitle = document.getElementById('welcomeTitle');
-                    if (welcomeTitle) {
-                        welcomeTitle.textContent = `Hello, ${userData.firstName}!`;
-                    }
-                    
-                    // Update user avatar in header
-                    const userAvatar = document.getElementById('userAvatar');
-                    if (userAvatar) {
-                        userAvatar.textContent = userData.firstName.charAt(0) + userData.lastName.charAt(0);
-                        
-                        // If there's a profile image, use it instead of initials
-                        if (userData.profileImage) {
-                            userAvatar.innerHTML = '';
-                            const img = document.createElement('img');
-                            img.src = userData.profileImage;
-                            img.alt = `${userData.firstName} ${userData.lastName}`;
-                            img.style.width = '100%';
-                            img.style.height = '100%';
-                            img.style.borderRadius = '50%';
-                            img.style.objectFit = 'cover';
-                            userAvatar.appendChild(img);
-                        }
-                    }
-                }
-            },
-            
-            setupEventListeners: function() {
-                // Listen for profile updates from other tabs/pages
-                window.addEventListener('storage', (e) => {
-                    if (e.key === 'stemUserData' || e.key === 'forceProfileImageUpdate') {
-                        this.loadUserData();
-                    }
-                });
-                
-                // Listen for custom events (same tab)
-                window.addEventListener('userProfileUpdated', (e) => {
-                    this.loadUserData();
-                });
-                
-                // Check for updates periodically (fallback)
-                setInterval(() => {
-                    this.loadUserData();
-                }, 2000);
+            if (userSnap.exists()) {
+                return userSnap.data();
             }
-        };
+            return null;
+        } catch (error) {
+            console.error("Error fetching user data:", error);
+            showNotification("Error loading profile", "error");
+            return null;
+        }
+    }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize dashboard user data
-            DashboardUser.init();
+    // 2. Fetch ALL elections - FIXED
+    async function fetchElections() {
+        try {
+            const electionsRef = collection(db, "elections");
+            const electionsSnap = await getDocs(electionsRef);
             
-            const mobileToggle = document.getElementById('mobileToggle');
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            const navItems = document.querySelectorAll('.nav-item');
-            const logoutBtn = document.getElementById('logout-btn');
-            const voteButtons = document.querySelectorAll('.vote-btn');
-
-            // Mobile sidebar toggle
-            function toggleSidebar() {
-                sidebar.classList.toggle('mobile-open');
-                overlay.classList.toggle('active');
-            }
-
-            mobileToggle.addEventListener('click', toggleSidebar);
-            overlay.addEventListener('click', toggleSidebar);
-
-            // Close sidebar when clicking on nav items on mobile
-            navItems.forEach(item => {
-                item.addEventListener('click', function() {
-                    if (window.innerWidth <= 768) {
-                        toggleSidebar();
-                    }
-                    
-                    if (this.id !== 'logout-btn') {
-                        navItems.forEach(i => i.classList.remove('active'));
-                        this.classList.add('active');
-                    }
+            console.log("Elections found:", electionsSnap.size); // Debug
+            
+            const elections = [];
+            electionsSnap.forEach(doc => {
+                const data = doc.data();
+                console.log("Election data:", data); // Debug
+                
+                // Handle Firestore Timestamps properly
+                let startDate, endDate;
+                
+                if (data.startDate && data.startDate.toDate) {
+                    startDate = data.startDate.toDate();
+                } else if (data.startDate) {
+                    startDate = new Date(data.startDate);
+                } else {
+                    startDate = new Date(); // Default to now
+                }
+                
+                if (data.endDate && data.endDate.toDate) {
+                    endDate = data.endDate.toDate();
+                } else if (data.endDate) {
+                    endDate = new Date(data.endDate);
+                } else {
+                    endDate = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // Default to 7 days from now
+                }
+                
+                elections.push({
+                    id: doc.id,
+                    title: data.title || "Untitled Election",
+                    category: data.category || "General",
+                    startDate: startDate,
+                    endDate: endDate,
+                    status: data.status || "active",
+                    description: data.description || ""
                 });
             });
+            
+            return elections;
+        } catch (error) {
+            console.error("Error fetching elections:", error);
+            showNotification("No elections found", "warning");
+            return [];
+        }
+    }
 
-            // Logout functionality
-            logoutBtn.addEventListener('click', function() {
-                if (confirm('Are you sure you want to log out?')) {
-                    console.log('User logged out');
-                    // Redirect to login page
-                    // window.location.href = 'login.html';
-                }
-            });
+    // 3. Fetch user's votes
+    async function fetchUserVotes(userId) {
+        try {
+            const votesRef = collection(db, "votes");
+            const userVotesQuery = query(votesRef, where("userId", "==", userId));
+            const votesSnap = await getDocs(userVotesQuery);
+            
+            console.log("User votes found:", votesSnap.size); // Debug
+            return votesSnap.size;
+        } catch (error) {
+            console.error("Error fetching user votes:", error);
+            return 0;
+        }
+    }
 
-            // Close sidebar when window is resized to desktop size
-            window.addEventListener('resize', function() {
-                if (window.innerWidth > 768) {
-                    sidebar.classList.remove('mobile-open');
-                    overlay.classList.remove('active');
-                }
-            });
+    // 4. Fetch ALL votes
+    async function fetchAllVotes() {
+        try {
+            const votesRef = collection(db, "votes");
+            const votesSnap = await getDocs(votesRef);
+            console.log("Total votes in system:", votesSnap.size); // Debug
+            return votesSnap.size;
+        } catch (error) {
+            console.error("Error fetching all votes:", error);
+            return 0;
+        }
+    }
+
+    // 5. Fetch ALL users
+    async function fetchAllUsers() {
+        try {
+            const usersRef = collection(db, "users");
+            const usersSnap = await getDocs(usersRef);
+            console.log("Total users:", usersSnap.size); // Debug
+            return usersSnap.size;
+        } catch (error) {
+            console.error("Error fetching users:", error);
+            return 0;
+        }
+    }
+
+    /* ===============================
+       DASHBOARD UPDATE FUNCTIONS - FIXED
+    =============================== */
+
+    // Update user info
+    function updateUserInfo(userData) {
+        if (userData) {
+            const name = userData.fullName || userData.email || "User";
+            welcomeTitle.textContent = `Hello, ${name}!`;
+            
+            const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+            avatarEl.textContent = initials;
+        }
+    }
+
+    // Update election stats - FIXED date comparison
+    function updateElectionStats(elections) {
+        const now = new Date();
+        console.log("Current time:", now); // Debug
+        
+        const activeElections = elections.filter(election => {
+            const start = new Date(election.startDate);
+            const end = new Date(election.endDate);
+            
+            console.log(`Election: ${election.title}`);
+            console.log(`Start: ${start}, End: ${end}`);
+            console.log(`Active? ${start <= now && end >= now}`);
+            
+            return start <= now && end >= now;
         });
-    </script>
+        
+        const upcomingElections = elections.filter(election => {
+            const start = new Date(election.startDate);
+            return start > now;
+        });
+        
+        const concludedElections = elections.filter(election => {
+            const end = new Date(election.endDate);
+            return end < now;
+        });
+        
+        console.log("Active:", activeElections.length, "Upcoming:", upcomingElections.length, "Concluded:", concludedElections.length);
+        
+        // Update stats cards
+        document.getElementById('totalElections').textContent = elections.length;
+        document.getElementById('activeElections').textContent = activeElections.length;
+        document.getElementById('summaryOngoing').textContent = activeElections.length;
+        document.getElementById('summaryUpcoming').textContent = upcomingElections.length;
+        document.getElementById('summaryConcluded').textContent = concludedElections.length;
+        
+        // Update active elections status
+        const activeStatus = document.getElementById('activeElectionsStatus');
+        if (activeElections.length > 0) {
+            activeStatus.className = 'trend up';
+            activeStatus.innerHTML = '<span class="material-icons">check_circle</span> Available';
+        } else {
+            activeStatus.className = 'trend down';
+            activeStatus.innerHTML = '<span class="material-icons">schedule</span> None active';
+        }
+        
+        return { activeElections, upcomingElections, concludedElections };
+    }
+
+    // Update voting stats - FIXED
+    async function updateVotingStats(userId, totalUsers) {
+        const userVotes = await fetchUserVotes(userId);
+        const totalVotes = await fetchAllVotes();
+        
+        console.log("User votes:", userVotes, "Total votes:", totalVotes, "Total users:", totalUsers);
+        
+        // Calculate voter turnout
+        const voterTurnout = totalUsers > 0 ? Math.round((totalVotes / totalUsers) * 100) : 0;
+        
+        // Update stats
+        document.getElementById('userVotes').textContent = userVotes;
+        document.getElementById('votesCast').textContent = userVotes;
+        document.getElementById('voterTurnout').textContent = `${voterTurnout}%`;
+        
+        // Update voting status
+        const votingStatus = document.getElementById('votingStatus');
+        if (userVotes > 0) {
+            votingStatus.className = 'trend up';
+            votingStatus.innerHTML = '<span class="material-icons">done</span> Participated';
+        } else {
+            votingStatus.className = 'trend down';
+            votingStatus.innerHTML = '<span class="material-icons">warning</span> Not voted yet';
+        }
+        
+        // Calculate available votes (positions from vote.html)
+        const positions = ['president', 'vice-president', 'secretary', 'treasurer'];
+        const availableVotes = positions.length - userVotes;
+        
+        document.getElementById('availableVotes').textContent = availableVotes > 0 ? availableVotes : 0;
+        document.getElementById('pendingVotes').textContent = availableVotes > 0 ? availableVotes : 0;
+    }
+
+    // Helper: Format date
+    function formatDate(date) {
+        return date.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        });
+    }
+
+    // Helper: Get time remaining
+    function getTimeRemaining(endDate) {
+        const now = new Date();
+        const end = new Date(endDate);
+        const diff = end - now;
+        
+        if (diff <= 0) return 'Ended';
+        
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        
+        if (days > 0) return `${days} day${days !== 1 ? 's' : ''} remaining`;
+        if (hours > 0) return `${hours} hour${hours !== 1 ? 's' : ''} remaining`;
+        return 'Less than an hour remaining';
+    }
+
+    // Update election lists
+    function updateElectionLists(activeElections, upcomingElections) {
+        const ongoingList = document.getElementById('ongoingElectionsList');
+        const upcomingList = document.getElementById('upcomingElectionsList');
+        
+        // Clear loading state
+        ongoingList.innerHTML = '';
+        upcomingList.innerHTML = '';
+        
+        // Update ongoing elections
+        if (activeElections.length > 0) {
+            activeElections.forEach(election => {
+                const electionItem = document.createElement('div');
+                electionItem.className = 'election-item';
+                electionItem.innerHTML = `
+                    <div class="election-info">
+                        <h4>${election.title}</h4>
+                        <p>${getTimeRemaining(election.endDate)} • ${election.category || 'General Election'}</p>
+                    </div>
+                    <button class="vote-btn" onclick="window.location.href='vote.html'">
+                        <span class="material-icons">how_to_vote</span>
+                        Vote Now
+                    </button>
+                `;
+                ongoingList.appendChild(electionItem);
+            });
+        } else {
+            ongoingList.innerHTML = `
+                <div class="election-item">
+                    <div class="election-info">
+                        <h4>No active elections</h4>
+                        <p>Check back later for upcoming elections</p>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Update upcoming elections
+        if (upcomingElections.length > 0) {
+            upcomingElections.slice(0, 3).forEach(election => {
+                const electionItem = document.createElement('div');
+                electionItem.className = 'election-item';
+                electionItem.innerHTML = `
+                    <div class="election-info">
+                        <h4>${election.title}</h4>
+                        <p>Starts ${formatDate(election.startDate)} • ${election.category || 'General Election'}</p>
+                    </div>
+                    <button class="vote-btn disabled">
+                        <span class="material-icons">schedule</span>
+                        Coming Soon
+                    </button>
+                `;
+                upcomingList.appendChild(electionItem);
+            });
+        } else {
+            upcomingList.innerHTML = `
+                <div class="election-item">
+                    <div class="election-info">
+                        <h4>No upcoming elections</h4>
+                        <p>Check back later for scheduled elections</p>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    /* ===============================
+       MAIN INITIALIZATION - FIXED
+    =============================== */
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        console.log("User authenticated:", user.uid);
+        
+        try {
+            // Fetch user data first
+            const userData = await fetchUserData(user.uid);
+            updateUserInfo(userData);
+            
+            // Fetch other data
+            const [elections, totalUsers] = await Promise.all([
+                fetchElections(),
+                fetchAllUsers()
+            ]);
+            
+            console.log("Elections loaded:", elections.length);
+            console.log("Total users:", totalUsers);
+            
+            const { activeElections, upcomingElections } = updateElectionStats(elections);
+            await updateVotingStats(user.uid, totalUsers);
+            updateElectionLists(activeElections, upcomingElections);
+            
+            showNotification('Dashboard updated successfully', 'success');
+        } catch (error) {
+            console.error("Error loading dashboard data:", error);
+            showNotification('Error loading dashboard data', 'error');
+        }
+    });
+
+    // Logout functionality
+    document.getElementById('logout-btn').addEventListener('click', async function() {
+         if (confirm('Are you sure you want to log out?')) {
+            try {
+                await auth.signOut();
+                window.location.href = 'login.html';
+            }
+            catch (error) {
+                console.error("Logout error:", error);
+                showToast("Error logging out", "error");
+                }
+         }
+        });
+    
+</script>
 </body>
 </html>
